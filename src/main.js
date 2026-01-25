@@ -1,5 +1,5 @@
 import TripPresenter from './presenter/trip-presenter.js';
-import EventPresenter from './presenter/event-presentor.js';
+import EventPresenter from './presenter/event-presenter.js';
 
 // trip container
 const pageHeader = document.querySelector('.page-header');
