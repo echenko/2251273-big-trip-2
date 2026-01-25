@@ -23,4 +23,3 @@ export default class EventListView {
     this.element = null;
   }
 }
-

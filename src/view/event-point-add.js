@@ -184,4 +184,3 @@ export default class EventPointAddView {
     this.element = null;
   }
 }
-
