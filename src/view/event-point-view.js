@@ -1,19 +1,26 @@
 import { createElement } from '../render.js';
+import { getDestinationPointById } from '../mock/destination.js';
 
-function createEventPoint() {
+function createEventPoint(eventPoint) {
+  const eventType = eventPoint.type;
+  const eventSity = getDestinationPointById(eventPoint.destination).name;
+  const dateFrom = new Date(eventPoint.dateFrom);
+  const dateTo = new Date(eventPoint.dateTo);
+
+
   return (`
           <li class="trip-events__item">
               <div class="event">
-                <time class="event__date" datetime="2019-03-18">MAR 18</time>
+                <time class="event__date" datetime="${dateFrom}">${dateFrom.getMonth() + 1}/${dateFrom.getDate()}</time>
                 <div class="event__type">
-                  <img class="event__type-icon" width="42" height="42" src="img/icons/taxi.png" alt="Event type icon">
+                  <img class="event__type-icon" width="42" height="42" src="img/icons/${eventType}.png" alt="Event type icon">
                 </div>
-                <h3 class="event__title">Taxi Amsterdam</h3>
+                <h3 class="event__title">${eventType} ${eventSity}</h3>
                 <div class="event__schedule">
                   <p class="event__time">
-                    <time class="event__start-time" datetime="2019-03-18T10:30">10:30</time>
+                    <time class="event__start-time" datetime="${dateFrom}">${dateFrom.getHours()}:${dateFrom.getMinutes()}</time>
                     &mdash;
-                    <time class="event__end-time" datetime="2019-03-18T11:00">11:00</time>
+                    <time class="event__end-time" datetime="${dateTo}">${dateTo.getHours()}:${dateTo.getMinutes()}</time>
                   </p>
                   <p class="event__duration">30M</p>
                 </div>
@@ -43,8 +50,12 @@ function createEventPoint() {
 }
 
 export default class EventPointView {
+  constructor({event}) {
+    this.event = event;
+  }
+
   getTemplate() {
-    return createEventPoint();
+    return createEventPoint(this.event);
   }
 
   getElement() {
