@@ -11,4 +11,9 @@ const TYPE_POINT = {
   'restaurant': 'Restaurant'
 };
 
-export {MAX_POINTS, TYPE_POINT};
+const DateFormat = {
+  eventDate:'MMM D',
+  eventTime:'HH:mm',
+};
+
+export {MAX_POINTS, TYPE_POINT, DateFormat};
