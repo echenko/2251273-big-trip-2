@@ -14,6 +14,7 @@ const pageMainContainer = pageMain.querySelector('.page-body__container');
 const tripEvents = pageMainContainer.querySelector('.trip-events');
 //event model
 const eventsModel = new EventsModel();
+eventsModel.init();
 
 // presenters
 const tripPresenter = new TripPresenter({
@@ -22,9 +23,7 @@ const tripPresenter = new TripPresenter({
 });
 const eventPresenter = new EventPresenter({
   eventContainer: tripEvents,
-  eventsModel: eventsModel,
+  eventsModel: eventsModel.getEvents(),
 });
-
-// presenters init
 tripPresenter.init();
 eventPresenter.init();

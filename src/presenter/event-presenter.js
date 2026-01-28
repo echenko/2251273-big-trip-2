@@ -19,12 +19,12 @@ export default class EventPresenter {
     render(this.eventSort, this.eventContainer, 'AFTERBEGIN');
     render(this.eventList, this.eventContainer, 'BEFOREEND');
 
-    for (const event of this.eventsModel.point) {
-      render(new EventPointView({event}), this.eventList.getElement(), 'BEFOREEND');
+    for (const event of this.eventsModel) {
+      render(new EventPointView({ event }), this.eventList.getElement(), 'BEFOREEND');
     }
 
-    render(new EventPointEditView(), this.eventList.getElement(), 'AFTERBEGIN');
-    render(new EventPointAddView(), this.eventList.getElement(), 'AFTERBEGIN');
+    render(new EventPointEditView({event: this.eventsModel[0]}), this.eventList.getElement(), 'AFTERBEGIN');
+    // render(new EventPointAddView(), this.eventList.getElement(), 'AFTERBEGIN');
   }
 
 }
