@@ -18,7 +18,7 @@ const DateFormat = {
   eventGroupTime:'D/MM/YY HH:mm',
 };
 
-const ALL_TYPES_FILTERS = [
+const ALL_TYPES_SORTING = [
   'day',
   'event',
   'time',
@@ -26,4 +26,4 @@ const ALL_TYPES_FILTERS = [
   'offer'
 ];
 
-export { MAX_POINTS, TypePoint , DateFormat, ALL_TYPES_FILTERS };
+export { MAX_POINTS, TypePoint , DateFormat, ALL_TYPES_SORTING };

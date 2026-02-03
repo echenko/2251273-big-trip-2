@@ -5,7 +5,7 @@ import EventPointEditView from '../view/event-point-edit-view.js';
 
 import { render, replace } from '../framework/render.js';
 import { isEscapeKey } from '../utils.js';
-import { ALL_TYPES_FILTERS } from '../const.js';
+import { ALL_TYPES_SORTING } from '../const.js';
 
 export default class EventPresenter {
   #eventContainer = null;
@@ -27,7 +27,7 @@ export default class EventPresenter {
 
   #renderListSort() {
     this.#eventSort = new EventSortView({
-      allTypesFilters: ALL_TYPES_FILTERS,
+      allTypesSorting: ALL_TYPES_SORTING,
       onSortTypeChange: (evt) => {
         evt.preventDefault();
         // TODO: Обработать событие
