@@ -57,8 +57,12 @@ function isEscapeKey(evt) {
  * @param {object} update - Item to be updated.
  * @returns {array} Updated array.
  */
-function updateItemInArray(array, update) {
-  return array.map((item) => (item.id === update.id ? update : item));
+function updateItemInArray(array, element) {
+  return array.map((item) => (item.id === element.id ? element : item));
+}
+
+function deleteItemInArray(array, element) {
+  return array.filter((item) => item.point.id !== element.point.id);
 }
 
 function sortEventsByType(events, type) {
@@ -70,4 +74,4 @@ function sortEventsByType(events, type) {
   return events;
 }
 
-export { getFormettedDate, getDurationTime, getRandomInt, isEscapeKey, updateItemInArray,sortEventsByType };
+export { getFormettedDate, getDurationTime, getRandomInt, isEscapeKey, updateItemInArray, deleteItemInArray,sortEventsByType };

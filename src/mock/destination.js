@@ -7,19 +7,19 @@ const DESTINATION_POINTS = [
     'name': 'Carleone',
     'pictures': [
       {
-        'src': `https://loremflickr.com/248/152?random=${getRandomInt(1, 10)}`,
+        'src': 'img/photos/1.jpg',
         'description': 'Chamonix parliament building'
       },
       {
-        'src': `https://loremflickr.com/248/152?random=${getRandomInt(1, 10)}`,
+        'src': 'img/photos/2.jpg',
         'description': 'Chamonix parliament building'
       },
       {
-        'src': `https://loremflickr.com/248/152?random=${getRandomInt(1, 10)}`,
+        'src': 'img/photos/3.jpg',
         'description': 'Chamonix parliament building'
       },
       {
-        'src': `https://loremflickr.com/248/152?random=${getRandomInt(1, 10)}`,
+        'src': 'img/photos/4.jpg',
         'description': 'Chamonix parliament building'
       }
     ]
@@ -30,11 +30,11 @@ const DESTINATION_POINTS = [
     'name': 'Laencaster',
     'pictures': [
       {
-        'src': `https://loremflickr.com/248/152?random=${getRandomInt(1, 10)}`,
+        'src': 'img/photos/1.jpg',
         'description': 'Chamonix parliament building'
       },
       {
-        'src': `https://loremflickr.com/248/152?random=${getRandomInt(1, 10)}`,
+        'src': 'img/photos/2.jpg',
         'description': 'Chamonix parliament building'
       }
     ]
@@ -45,11 +45,23 @@ const DESTINATION_POINTS = [
     'name': 'Islesbury',
     'pictures': [
       {
-        'src': `https://loremflickr.com/248/152?random=${getRandomInt(1, 10)}`,
+        'src': 'img/photos/1.jpg',
         'description': 'Chamonix parliament building'
       },
       {
-        'src': `https://loremflickr.com/248/152?random=${getRandomInt(1, 10)}`,
+        'src': 'img/photos/2.jpg',
+        'description': 'Chamonix parliament building'
+      },
+      {
+        'src': 'img/photos/3.jpg',
+        'description': 'Chamonix parliament building'
+      },
+      {
+        'src': 'img/photos/4.jpg',
+        'description': 'Chamonix parliament building'
+      },
+      {
+        'src': 'img/photos/5.jpg',
         'description': 'Chamonix parliament building'
       }
     ]
@@ -60,15 +72,15 @@ const DESTINATION_POINTS = [
     'name': 'Westray',
     'pictures': [
       {
-        'src': `https://loremflickr.com/248/152?random=${getRandomInt(1, 10)}`,
+        'src': 'img/photos/1.jpg',
         'description': 'Chamonix parliament building'
       },
       {
-        'src': `https://loremflickr.com/248/152?random=${getRandomInt(1, 10)}`,
+        'src': 'img/photos/2.jpg',
         'description': 'Chamonix parliament building'
       },
       {
-        'src': `https://loremflickr.com/248/152?random=${getRandomInt(1, 10)}`,
+        'src': 'img/photos/3.jpg',
         'description': 'Chamonix parliament building'
       }
     ]
@@ -85,7 +97,7 @@ const DESTINATION_POINTS = [
     'name': 'Ruthorham',
     'pictures': [
       {
-        'src': `https://loremflickr.com/248/152?random=${getRandomInt(1, 10)}`,
+        'src': 'img/photos/1.jpg',
         'description': 'Chamonix parliament building'
       }
     ]
@@ -96,11 +108,11 @@ const DESTINATION_POINTS = [
     'name': 'Bamborourgh',
     'pictures': [
       {
-        'src': `https://loremflickr.com/248/152?random=${getRandomInt(1, 10)}`,
+        'src': 'img/photos/1.jpg',
         'description': 'Chamonix parliament building'
       },
       {
-        'src': `https://loremflickr.com/248/152?random=${getRandomInt(1, 10)}`,
+        'src': 'img/photos/2.jpg',
         'description': 'Chamonix parliament building'
       }
     ]
@@ -111,15 +123,15 @@ const DESTINATION_POINTS = [
     'name': 'Pirn',
     'pictures': [
       {
-        'src': `https://loremflickr.com/248/152?random=${getRandomInt(1, 10)}`,
+        'src': 'img/photos/1.jpg',
         'description': 'Chamonix parliament building'
       },
       {
-        'src': `https://loremflickr.com/248/152?random=${getRandomInt(1, 10)}`,
+        'src': 'img/photos/2.jpg',
         'description': 'Chamonix parliament building'
       },
       {
-        'src': `https://loremflickr.com/248/152?random=${getRandomInt(1, 10)}`,
+        'src': 'img/photos/3.jpg',
         'description': 'Chamonix parliament building'
       }
     ]

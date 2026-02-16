@@ -10,6 +10,7 @@ export default class EventPresentor {
   #handleEventChange = null;
   #handleModeChange = null;
   #handleEventSave = null;
+  #handleEventDelete = null;
 
   #eventComponent = null;
   #eventEditComponent = null;
@@ -17,11 +18,12 @@ export default class EventPresentor {
   #event = null;
   #mode = EVENT_MODE.DEFAULT;
 
-  constructor({eventListContainer, onEventChange, onModeChange, onEventSave}) {
+  constructor({eventListContainer, onEventChange, onModeChange, onEventSave, onEventDelete}) {
     this.#eventListContainer = eventListContainer;
     this.#handleEventChange = onEventChange;
     this.#handleModeChange = onModeChange;
     this.#handleEventSave = onEventSave;
+    this.#handleEventDelete = onEventDelete;
   }
 
   init(event) {
@@ -41,7 +43,7 @@ export default class EventPresentor {
       event: this.#event,
       onSwitchToCard: this.#handleSwitchToCard,
       onSubmitForm: this.#handleFormSubmit,
-      onResetForm: this.#handleFormReset,
+      onDeleteForm: this.#handleFormDelete
     });
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
@@ -90,13 +92,13 @@ export default class EventPresentor {
 
   #handleFormSubmit = (evt) => {
     evt.preventDefault();
-    this.#handleEventSave();
+    this.#handleEventSave(evt);
     // TODO: Реализовать отправку формы
   };
 
-  #handleFormReset = (evt) => {
-    evt.preventDefault();
+  #handleFormDelete = () => {
     // TODO: Реализовать отправку формы
+    this.#handleEventDelete({eventId: this.#event.point.id, event: this.#event});
   };
 
   resetView() {

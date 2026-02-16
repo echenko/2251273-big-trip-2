@@ -5,7 +5,7 @@ import EventListView from '../view/event-list-view.js';
 
 import { render } from '../framework/render.js';
 
-import { updateItemInArray, sortEventsByType } from '../utils.js';
+import { updateItemInArray, deleteItemInArray, sortEventsByType } from '../utils.js';
 
 export default class MainPresenter {
   #eventContainer = null;
@@ -47,6 +47,7 @@ export default class MainPresenter {
         onEventChange: this.#handleEventChange,
         onModeChange: this.#handleModeChange,
         onEventSave: this.#handleEventSave,
+        onEventDelete: this.#handleEventDelete
       });
       this.#eventsPresentor.set(event.point.id, eventPresentor);
       eventPresentor.init(event);
@@ -65,7 +66,7 @@ export default class MainPresenter {
 
   // Обновляем событие (перерисовываем его)
   #handleEventChange = ({eventId, event}) => {
-    this.#eventsList = updateItemInArray(this.#eventsList, event);
+    this.#updateEvents(event);
     this.#eventsPresentor.get(eventId).init(event);
   };
 
@@ -74,8 +75,15 @@ export default class MainPresenter {
     this.#eventsPresentor.forEach((eventPresentor) => eventPresentor.resetView());
   };
 
-  #handleEventSave = () => {
+  #handleEventSave = (evt) => {
+    evt.preventDefault();
     // TODO: Обработать сохранение события
+  };
+
+  #handleEventDelete = ({eventId, event}) => {
+    this.#eventsPresentor.get(eventId).destroy();
+    this.#eventsPresentor.delete(eventId);
+    this.#deleteEvents(event);
   };
 
   #handleSortChange = ({sortType}) => {
@@ -97,6 +105,14 @@ export default class MainPresenter {
   #clearEvents = () => {
     this.#eventsPresentor.forEach((eventPresentor) => eventPresentor.destroy());
     this.#eventsPresentor.clear();
+  };
+
+  #updateEvents = (event) => {
+    this.#eventsList = updateItemInArray(this.#eventsList, event);
+  };
+
+  #deleteEvents = (event) => {
+    this.#eventsList = deleteItemInArray(this.#eventsList, event);
   };
 
   // Получаем все события из модели
