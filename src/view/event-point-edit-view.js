@@ -1,6 +1,6 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 
-import { getFormettedDate } from './../utils.js';
+import { getFormettedDate, addOfferInArray, deleteOfferInArray } from './../utils.js';
 import { DateFormat, TypePoint } from '../const.js';
 
 function crateEventTypeList({eventType}) {
@@ -51,7 +51,7 @@ function createEventOffersList({allOffers, eventOffers}) {
         const isChecked = eventOffers.includes(offer.id);
         return (`
           <div class="event__offer-selector">
-            <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.id}-1" type="checkbox" name="event-offer-${offer.id}" ${isChecked ? 'checked' : ''}>
+            <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.id}-1" type="checkbox" name="event-offer-${offer.id}" data-offer-id="${offer.id}" ${isChecked ? 'checked' : ''}>
             <label class="event__offer-label" for="event-offer-${offer.id}-1">
               <span class="event__offer-title">${offer.title}</span>&plus;&euro;&nbsp;
               <span class="event__offer-price">${offer.price}</span>
@@ -172,13 +172,25 @@ export default class EventPointEditView extends AbstractStatefulView {
 
   _restoreHandlers() {
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#onSwitchToCard);
-    this.element.querySelector('.event').addEventListener('submit', this.#onSubmitForm);
+    this.element.querySelector('.event').addEventListener('submit', (evt) => {
+      evt.preventDefault();
+      this.#onSubmitForm({eventId: this._state.point.id, event: this._state});
+    });
     this.element.querySelector('.event').addEventListener('reset', this.#onDeleteForm);
     this.element.querySelectorAll('.event__offer-checkbox').forEach((checkbox) => {
       checkbox.addEventListener('change', (evt) => {
-        console.log(evt.target.id);
+        this.#updadeOffersEvent({offerId: evt.target.dataset.offerId, checked: evt.target.checked});
       });
     });
   }
+
+  #updadeOffersEvent = ({offerId, checked}) => {
+    if (checked) {
+      this._state.point.offers = addOfferInArray(this._state.point.offers, offerId);
+    } else {
+      this._state.point.offers = deleteOfferInArray(this._state.point.offers, offerId);
+    }
+  };
+
 
 }

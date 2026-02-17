@@ -51,18 +51,31 @@ function isEscapeKey(evt) {
 }
 
 /**
- * Updates the item in the given array with the given update.
- * The update item is found by its id and replaced with the new item.
- * @param {array} array - Array containing the item to be updated.
- * @param {object} update - Item to be updated.
- * @returns {array} Updated array.
+ * Updates an event in an array by replacing the old event with the new one.
+ * If the event with the given id is not found, the array is returned unchanged.
+ * @param {array} array - Array of events to update.
+ * @param {object} element - New event to replace the old one.
+ * @returns {array} Updated array of events.
  */
-function updateItemInArray(array, element) {
-  return array.map((item) => (item.id === element.id ? element : item));
+function updateEventInArray(array, element) {
+  return array.map((item) => (item.point.id === element.point.id ? element : item));
 }
 
-function deleteItemInArray(array, element) {
+
+function deleteEventInArray(array, element) {
   return array.filter((item) => item.point.id !== element.point.id);
+}
+
+
+function addOfferInArray(array, element) {
+  if (array.includes(element)) {
+    return array;
+  }
+  return [...array, element];
+}
+
+function deleteOfferInArray(array, element) {
+  return array.filter((item) => item !== element);
 }
 
 function sortEventsByType(events, type) {
@@ -74,4 +87,14 @@ function sortEventsByType(events, type) {
   return events;
 }
 
-export { getFormettedDate, getDurationTime, getRandomInt, isEscapeKey, updateItemInArray, deleteItemInArray,sortEventsByType };
+export {
+  getFormettedDate,
+  getDurationTime,
+  getRandomInt,
+  isEscapeKey,
+  updateEventInArray,
+  deleteEventInArray,
+  addOfferInArray,
+  deleteOfferInArray,
+  sortEventsByType,
+};

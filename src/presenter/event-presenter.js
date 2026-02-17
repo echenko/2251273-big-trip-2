@@ -3,7 +3,6 @@ import EventPointEditView from '../view/event-point-edit-view.js';
 
 import { remove, render, replace } from '../framework/render.js';
 import { EVENT_MODE } from '../const.js';
-// import { isEscapeKey } from '../utils.js';
 
 export default class EventPresentor {
   #eventListContainer = null;
@@ -90,14 +89,12 @@ export default class EventPresentor {
     });
   };
 
-  #handleFormSubmit = (evt) => {
-    evt.preventDefault();
-    this.#handleEventSave(evt);
-    // TODO: Реализовать отправку формы
+  #handleFormSubmit = ({eventId, event}) => {
+    this.#handleEventSave({eventId, event});
+    this.#handleSwitchToCard();
   };
 
   #handleFormDelete = () => {
-    // TODO: Реализовать отправку формы
     this.#handleEventDelete({eventId: this.#event.point.id, event: this.#event});
   };
 
