@@ -12,11 +12,11 @@ export default class EventsModel {
   }
 
   getOfferByType(type) {
-    return this.#offers.filter((offer) => offer.type === type);
+    return this.#offers.find((offer) => offer.type === type).offers || null;
   }
 
-  get allOffers() {
-    return this.#offers;
-  }
+  // get allOffers() {
+  //   return this.#offers;
+  // }
 
 }

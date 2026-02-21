@@ -15,8 +15,8 @@ export default class EventsModel {
     return this.#destinations.find((destination) => destination.id === id || null);
   }
 
-  get allDestinations() {
-    return this.#destinations;
-  }
+  // get allDestinations() {
+  //   return this.#destinations;
+  // }
 
 }

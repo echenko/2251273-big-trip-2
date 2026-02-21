@@ -17,7 +17,7 @@ export default class MainPresenter {
   #destinationsModel = null;
   //
   #eventsListLocalStorage = [];
-  #sortEventsList = [];
+  // #sortEventsList = [];
   #eventsPresentor = new Map();
   #sortPresenter = null;
   #currentSortType = 'day';
@@ -41,9 +41,9 @@ export default class MainPresenter {
     this.#offersModel.init();
     this.#destinationsModel.init();
     //
-    this.#saveEventListLocalStorage(this.#eventsModel.allEvents);
+    this.#saveEventInLocalStorage(this.#eventsModel.allEvents);
 
-    // this.#renderSortEvent();
+    this.#renderSortEvent();
 
     this.#renderEventsListContainer();
     this.#renderAllEvents(this.#eventsListLocalStorage);
@@ -66,9 +66,9 @@ export default class MainPresenter {
         destinationsModel: this.#destinationsModel,
         //
         onEventChange: this.#handleEventChange,
-        // onModeChange: this.#handleModeChange,
-        // onEventSave: this.#handleEventSave,
-        // onEventDelete: this.#handleEventDelete,
+        onModeChange: this.#handleModeChange,
+        onEventSave: this.#handleEventSave,
+        onEventDelete: this.#handleEventDelete,
       });
       this.#eventsPresentor.set(event.id, eventPresentor);
       eventPresentor.init(event);
@@ -76,67 +76,67 @@ export default class MainPresenter {
   }
 
   // Отрисовываем сортировку
-  // #renderSortEvent() {
-  //   this.#sortPresenter = new SortPresenter({
-  //     sortListContainer: this.#eventListContainer.element,
-  //     onSortChange: this.#handleSortChange,
-  //   });
-  //   this.#sortPresenter.init();
+  #renderSortEvent() {
+    this.#sortPresenter = new SortPresenter({
+      sortListContainer: this.#eventListContainer.element,
+      onSortChange: this.#handleSortChange,
+    });
+    this.#sortPresenter.init();
 
-  // }
+  }
 
   // Обновляем событие (перерисовываем его)
-  #handleEventChange = ({ event }) => {
-    this.#updateEventLocalStorage(event);
+  #handleEventChange = (event) => {
+    this.#updateEventInLocalStorage(event);
     this.#eventsPresentor.get(event.id).update(event);
   };
 
   // Сбрасываем режим редактирования
-  // #handleModeChange = () => {
-  //   this.#eventsPresentor.forEach((eventPresentor) => eventPresentor.resetView());
-  // };
+  #handleModeChange = () => {
+    this.#eventsPresentor.forEach((eventPresentor) => eventPresentor.resetView());
+  };
 
-  // #handleEventSave = ({eventId, event}) => {
-  //   this.#updateEvent(event);
-  //   this.#eventsPresentor.get(eventId).init(event);
-  // };
+  #handleEventSave = (event) => {
+    this.#updateEventInLocalStorage(event);
+    this.#eventsPresentor.get(event.id).update(event);
+  };
 
-  // #handleEventDelete = ({eventId, event}) => {
-  //   this.#eventsPresentor.get(eventId).destroy();
-  //   this.#eventsPresentor.delete(eventId);
-  //   this.#deleteEvent(event);
-  // };
+  #handleEventDelete = ({event}) => {
+    this.#eventsPresentor.get(event.id).destroy();
+    this.#eventsPresentor.delete(event.id);
+    this.#deleteEventInLocalStorage(event);
+  };
 
-  // #handleSortChange = ({sortType}) => {
+  #handleSortChange = ({sortType}) => {
 
-  //   if (this.#currentSortType === sortType) {
-  //     return;
-  //   }
-  //   this.#currentSortType = sortType;
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+    this.#currentSortType = sortType;
 
-  //   if (this.#currentSortType === 'day') {
-  //     this.#clearEvents();
-  //     this.#renderAllEvents(this.#eventsListLocalStorage);
-  //   } else {
-  //     this.#clearEvents();
-  //     this.#renderAllEvents(sortEventsByType(structuredClone(this.#eventsListLocalStorage), sortType));
-  //   }
-  // };
+    if (this.#currentSortType === 'day') {
+      this.#clearEvents();
+      this.#renderAllEvents(this.#eventsListLocalStorage);
+    } else {
+      this.#clearEvents();
+      this.#renderAllEvents(sortEventsByType(structuredClone(this.#eventsListLocalStorage), sortType));
+    }
+  };
 
-  // #clearEvents = () => {
-  //   this.#eventsPresentor.forEach((eventPresentor) => eventPresentor.destroy());
-  //   this.#eventsPresentor.clear();
-  // };
+  #clearEvents = () => {
+    this.#eventsPresentor.forEach((eventPresentor) => eventPresentor.destroy());
+    this.#eventsPresentor.clear();
+  };
 
-  #updateEventLocalStorage = (event) => {
+  #updateEventInLocalStorage = (event) => {
     this.#eventsListLocalStorage = updateEventInArray(this.#eventsListLocalStorage, event);
   };
 
-  // #deleteEvent = (event) => {
-  //   this.#eventsListLocalStorage = deleteEventInArray(this.#eventsListLocalStorage, event);
-  // };
+  #deleteEventInLocalStorage = (event) => {
+    this.#eventsListLocalStorage = deleteEventInArray(this.#eventsListLocalStorage, event);
+  };
 
-  #saveEventListLocalStorage(events) {
+  #saveEventInLocalStorage(events) {
     this.#eventsListLocalStorage = structuredClone(events);
   }
 }

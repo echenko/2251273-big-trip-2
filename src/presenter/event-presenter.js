@@ -31,7 +31,8 @@ export default class EventPresentor {
     onEventChange,
     onModeChange,
     onEventSave,
-    onEventDelete }) {
+    onEventDelete
+  }) {
     //
     this.#eventListContainer = eventListContainer;
     this.#eventsModel = eventsModel;
@@ -50,29 +51,24 @@ export default class EventPresentor {
     render(this.#eventComponent, this.#eventListContainer);
 
     this.#eventEditComponent = this.#createEventEditComponent();
-    render(this.#eventEditComponent, this.#eventListContainer);
-
-    // if (prevEventComponent === null || prevEventEditComponent === null) {
-    //   render(this.#eventComponent, this.#eventListContainer);
-    // }
-
-    // if (this.#mode === EVENT_MODE.EDITING) {
-    //   replace(this.#eventEditComponent, prevEventEditComponent);
-    // }
-
-    // if (this.#mode === EVENT_MODE.DEFAULT) {
-    //   replace(this.#eventComponent, prevEventComponent);
-    // }
-
-    // remove(prevEventComponent);
-    // remove(prevEventEditComponent);
   }
 
   update(event) {
     this.#event = event;
+
     const updatedEventComponent = this.#createEventComponent();
-    replace(updatedEventComponent, this.#eventComponent);
+    const updatedEventEditComponent = this.#createEventEditComponent();
+
+    if (this.#mode === EVENT_MODE.DEFAULT) {
+      replace(updatedEventComponent, this.#eventComponent);
+    } else {
+      replace(updatedEventEditComponent, this.#eventEditComponent);
+      this.#eventEditComponent = updatedEventEditComponent;
+    }
+
     this.#eventComponent = updatedEventComponent;
+    this.#eventEditComponent = updatedEventEditComponent;
+
   }
 
   #createEventComponent() {
@@ -81,7 +77,7 @@ export default class EventPresentor {
       // eventsModel: this.#eventsModel,
       offersModel: this.#offersModel,
       destinationsModel: this.#destinationsModel,
-      // onSwitchToForm: this.#handleSwitchToForm,
+      onSwitchToForm: this.#handleSwitchToForm,
       onFavoriteClick: this.#handleFavoriteClick
     }
     );
@@ -93,57 +89,55 @@ export default class EventPresentor {
       // eventsModel: this.#eventsModel,
       offersModel: this.#offersModel,
       destinationsModel: this.#destinationsModel,
-      // onSwitchToCard: this.#handleSwitchToCard,
-      // onSubmitForm: this.#handleFormSubmit,
-      // onDeleteForm: this.#handleFormDelete
+      onSwitchToCard: this.#handleSwitchToCard,
+      onSubmitForm: this.#handleFormSubmit,
+      onDeleteForm: this.#handleFormDelete
     }
     );
   }
 
-  // #switchToForm() {
-  //   replace(this.#eventEditComponent, this.#eventComponent);
-  //   this.#handleModeChange();
-  //   this.#mode = EVENT_MODE.EDITING;
-  // }
+  #switchToForm() {
+    replace(this.#eventEditComponent, this.#eventComponent);
+    this.#handleModeChange();
+    this.#mode = EVENT_MODE.EDITING;
+  }
 
-  // #switchToCard() {
-  //   replace(this.#eventComponent, this.#eventEditComponent);
-  //   this.#mode = EVENT_MODE.DEFAULT;
-  // }
+  #switchToCard() {
+    replace(this.#eventComponent, this.#eventEditComponent);
+    this.#mode = EVENT_MODE.DEFAULT;
+  }
 
-  // #handleSwitchToForm = () => {
-  //   this.#switchToForm();
-  // };
+  #handleSwitchToForm = () => {
+    this.#switchToForm();
+  };
 
-  // #handleSwitchToCard = () => {
-  //   this.#switchToCard();
-  // };
+  #handleSwitchToCard = () => {
+    this.#switchToCard();
+  };
 
   #handleFavoriteClick = () => {
     this.#event.isFavorite = !this.#event.isFavorite;
-    this.#handleEventChange({
-      event: this.#event,
-    });
+    this.#handleEventChange(this.#event);
   };
 
-  // #handleFormSubmit = ({eventId, event}) => {
-  //   this.#handleEventSave({eventId, event});
-  //   this.#handleSwitchToCard();
-  // };
+  #handleFormSubmit = (event) => {
+    this.#handleEventSave(event);
+    this.#handleSwitchToCard();
+  };
 
-  // #handleFormDelete = () => {
-  //   this.#handleEventDelete({eventId: this.#event.point.id, event: this.#event});
-  // };
+  #handleFormDelete = () => {
+    this.#handleEventDelete({event: this.#event});
+  };
 
-  // resetView() {
-  //   if (this.#mode !== EVENT_MODE.DEFAULT) {
-  //     this.#switchToCard();
-  //   }
-  // }
+  resetView() {
+    if (this.#mode !== EVENT_MODE.DEFAULT) {
+      this.#switchToCard();
+    }
+  }
 
-  // destroy() {
-  //   remove(this.#eventComponent);
-  //   remove(this.#eventEditComponent);
-  // }
+  destroy() {
+    remove(this.#eventComponent);
+    remove(this.#eventEditComponent);
+  }
 
 }

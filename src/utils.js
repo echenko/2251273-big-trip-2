@@ -63,7 +63,7 @@ function updateEventInArray(array, element) {
 
 
 function deleteEventInArray(array, element) {
-  return array.filter((item) => item.point.id !== element.point.id);
+  return array.filter((item) => item.id !== element.id);
 }
 
 
@@ -80,9 +80,9 @@ function deleteOfferInArray(array, element) {
 
 function sortEventsByType(events, type) {
   if (type === 'price') {
-    return events.sort((a, b) => b.point.basePrice - a.point.basePrice);
+    return events.sort((a, b) => b.basePrice - a.basePrice);
   } else if (type === 'time') {
-    return events.sort((a, b) => dayjs(b.point.dateTo).diff(dayjs(b.point.dateFrom)) - dayjs(a.point.dateTo).diff(dayjs(a.point.dateFrom)));
+    return events.sort((a, b) => dayjs(b.dateTo).diff(dayjs(b.dateFrom)) - dayjs(a.dateTo).diff(dayjs(a.dateFrom)));
   }
   return events;
 }
