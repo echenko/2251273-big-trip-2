@@ -5,50 +5,70 @@ import EventListView from '../view/event-list-view.js';
 
 import { render } from '../framework/render.js';
 
-import { updateItemInArray, sortEventsByType } from '../utils.js';
+import { updateEventInArray, deleteEventInArray, sortEventsByType } from '../utils.js';
 
 export default class MainPresenter {
+  #eventListContainer = new EventListView();
+  // Containers
   #eventContainer = null;
+  // Models
   #eventsModel = null;
-
-  #eventList = new EventListView();
-  #eventsList = [];
-  #sortEventsList = [];
+  #offersModel = null;
+  #destinationsModel = null;
+  // Temp
+  #eventsListLocalStorage = [];
   #eventsPresentor = new Map();
   #sortPresenter = null;
   #currentSortType = 'day';
 
-  constructor({ eventContainer, eventsModel }) {
+  constructor({
+    eventContainer,
+    eventsModel,
+    offersModel,
+    destinationsModel
+  }) {
     this.#eventContainer = eventContainer;
     this.#eventsModel = eventsModel;
+    this.#offersModel = offersModel;
+    this.#destinationsModel = destinationsModel;
   }
 
   // Инициализируем презентер
   init() {
-    this.#eventsList = this.allEvents;
+    // Init models
+    this.#eventsModel.init();
+    this.#offersModel.init();
+    this.#destinationsModel.init();
+
+    this.#saveEventInLocalStorage(this.#eventsModel.allEvents);
 
     this.#renderSortEvent();
-
-    this.#renderListEvent();
-
-    this.#renderAllEvents(this.#eventsList);
+    this.#renderEventsListContainer();
+    this.#renderAllEvents(this.#eventsListLocalStorage);
   }
 
   // Отрисовываем список событий
-  #renderListEvent() {
-    render(this.#eventList, this.#eventContainer);
+  #renderEventsListContainer() {
+    render(this.#eventListContainer, this.#eventContainer);
   }
 
   // Отрисовываем все события
-  #renderAllEvents(eventsList = this.#eventsList) {
+  #renderAllEvents(eventsList = this.#eventsListLocalStorage) {
     eventsList.forEach((event) => {
       const eventPresentor = new EventPresenter({
-        eventListContainer: this.#eventList.element,
+        // Containers
+        eventListContainer: this.#eventListContainer.element,
+        // Models
+        eventsModel: this.#eventsModel,
+        offersModel: this.#offersModel,
+        destinationsModel: this.#destinationsModel,
+        // Handlers
         onEventChange: this.#handleEventChange,
         onModeChange: this.#handleModeChange,
         onEventSave: this.#handleEventSave,
+        onEventDelete: this.#handleEventDelete,
       });
-      this.#eventsPresentor.set(event.point.id, eventPresentor);
+      this.#eventsPresentor.set(event.id, eventPresentor);
       eventPresentor.init(event);
     });
   }
@@ -56,17 +76,17 @@ export default class MainPresenter {
   // Отрисовываем сортировку
   #renderSortEvent() {
     this.#sortPresenter = new SortPresenter({
-      sortListContainer: this.#eventList.element,
-      onSortChange: this.#handleSortChange
+      sortListContainer: this.#eventListContainer.element,
+      onSortChange: this.#handleSortChange,
     });
     this.#sortPresenter.init();
 
   }
 
   // Обновляем событие (перерисовываем его)
-  #handleEventChange = ({eventId, event}) => {
-    this.#eventsList = updateItemInArray(this.#eventsList, event);
-    this.#eventsPresentor.get(eventId).init(event);
+  #handleEventChange = (event) => {
+    this.#updateEventInLocalStorage(event);
+    this.#eventsPresentor.get(event.id).update(event);
   };
 
   // Сбрасываем режим редактирования
@@ -74,8 +94,15 @@ export default class MainPresenter {
     this.#eventsPresentor.forEach((eventPresentor) => eventPresentor.resetView());
   };
 
-  #handleEventSave = () => {
-    // TODO: Обработать сохранение события
+  #handleEventSave = (event) => {
+    this.#updateEventInLocalStorage(event);
+    this.#eventsPresentor.get(event.id).update(event);
+  };
+
+  #handleEventDelete = ({event}) => {
+    this.#eventsPresentor.get(event.id).destroy();
+    this.#eventsPresentor.delete(event.id);
+    this.#deleteEventInLocalStorage(event);
   };
 
   #handleSortChange = ({sortType}) => {
@@ -87,10 +114,10 @@ export default class MainPresenter {
 
     if (this.#currentSortType === 'day') {
       this.#clearEvents();
-      this.#renderAllEvents(this.#eventsList);
+      this.#renderAllEvents(this.#eventsListLocalStorage);
     } else {
       this.#clearEvents();
-      this.#renderAllEvents(sortEventsByType(structuredClone(this.#eventsList), sortType));
+      this.#renderAllEvents(sortEventsByType(structuredClone(this.#eventsListLocalStorage), sortType));
     }
   };
 
@@ -99,9 +126,16 @@ export default class MainPresenter {
     this.#eventsPresentor.clear();
   };
 
-  // Получаем все события из модели
-  get allEvents() {
-    return this.#eventsModel.allEvents;
-  }
+  // localStorage
+  #updateEventInLocalStorage = (event) => {
+    this.#eventsListLocalStorage = updateEventInArray(this.#eventsListLocalStorage, event);
+  };
 
+  #deleteEventInLocalStorage = (event) => {
+    this.#eventsListLocalStorage = deleteEventInArray(this.#eventsListLocalStorage, event);
+  };
+
+  #saveEventInLocalStorage(events) {
+    this.#eventsListLocalStorage = structuredClone(events);
+  }
 }

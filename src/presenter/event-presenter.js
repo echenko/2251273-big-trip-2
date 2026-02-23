@@ -3,62 +3,92 @@ import EventPointEditView from '../view/event-point-edit-view.js';
 
 import { remove, render, replace } from '../framework/render.js';
 import { EVENT_MODE } from '../const.js';
-// import { isEscapeKey } from '../utils.js';
 
 export default class EventPresentor {
+  // Containers
   #eventListContainer = null;
+  // Models
+  #offersModel = null;
+  #destinationsModel = null;
+  // Handlers
   #handleEventChange = null;
   #handleModeChange = null;
   #handleEventSave = null;
-
+  #handleEventDelete = null;
+  // Components
   #eventComponent = null;
   #eventEditComponent = null;
 
   #event = null;
   #mode = EVENT_MODE.DEFAULT;
 
-  constructor({eventListContainer, onEventChange, onModeChange, onEventSave}) {
+  constructor({
+    eventListContainer,
+    offersModel,
+    destinationsModel,
+    onEventChange,
+    onModeChange,
+    onEventSave,
+    onEventDelete
+  }) {
+    //
     this.#eventListContainer = eventListContainer;
+    this.#offersModel = offersModel;
+    this.#destinationsModel = destinationsModel;
     this.#handleEventChange = onEventChange;
     this.#handleModeChange = onModeChange;
     this.#handleEventSave = onEventSave;
+    this.#handleEventDelete = onEventDelete;
   }
 
   init(event) {
     this.#event = event;
 
-    const prevEventComponent = this.#eventComponent;
-    const prevEventEditComponent = this.#eventEditComponent;
+    this.#eventComponent = this.#createEventComponent();
+    render(this.#eventComponent, this.#eventListContainer);
 
-    this.#eventComponent = new EventPointView({
-      event : this.#event,
+    this.#eventEditComponent = this.#createEventEditComponent();
+  }
+
+  update(event) {
+    this.#event = event;
+
+    const updatedEventComponent = this.#createEventComponent();
+    const updatedEventEditComponent = this.#createEventEditComponent();
+
+    if (this.#mode === EVENT_MODE.DEFAULT) {
+      replace(updatedEventComponent, this.#eventComponent);
+    } else {
+      replace(updatedEventEditComponent, this.#eventEditComponent);
+      this.#eventEditComponent = updatedEventEditComponent;
+    }
+
+    this.#eventComponent = updatedEventComponent;
+    this.#eventEditComponent = updatedEventEditComponent;
+
+  }
+
+  #createEventComponent() {
+    return new EventPointView({
+      event: this.#event,
+      offersModel: this.#offersModel,
+      destinationsModel: this.#destinationsModel,
       onSwitchToForm: this.#handleSwitchToForm,
       onFavoriteClick: this.#handleFavoriteClick
     }
     );
+  }
 
-    this.#eventEditComponent = new EventPointEditView({
+  #createEventEditComponent() {
+    return new EventPointEditView({
       event: this.#event,
+      offersModel: this.#offersModel,
+      destinationsModel: this.#destinationsModel,
       onSwitchToCard: this.#handleSwitchToCard,
       onSubmitForm: this.#handleFormSubmit,
-      onResetForm: this.#handleFormReset,
-    });
-
-    if (prevEventComponent === null || prevEventEditComponent === null) {
-      render(this.#eventComponent, this.#eventListContainer);
-      return;
+      onDeleteForm: this.#handleFormDelete
     }
-
-    if (this.#mode === EVENT_MODE.EDITING) {
-      replace(this.#eventEditComponent, prevEventEditComponent);
-    }
-
-    if (this.#mode === EVENT_MODE.DEFAULT) {
-      replace(this.#eventComponent, prevEventComponent);
-    }
-
-    remove(prevEventComponent);
-    remove(prevEventEditComponent);
+    );
   }
 
   #switchToForm() {
@@ -81,22 +111,17 @@ export default class EventPresentor {
   };
 
   #handleFavoriteClick = () => {
-    const eventId = this.#event.point.id;
-    this.#handleEventChange({
-      eventId,
-      event: {...this.#event, point: {...this.#event.point, isFavorite: !this.#event.point.isFavorite}}
-    });
+    this.#event.isFavorite = !this.#event.isFavorite;
+    this.#handleEventChange(this.#event);
   };
 
-  #handleFormSubmit = (evt) => {
-    evt.preventDefault();
-    this.#handleEventSave();
-    // TODO: Реализовать отправку формы
+  #handleFormSubmit = (event) => {
+    this.#handleEventSave(event);
+    this.#handleSwitchToCard();
   };
 
-  #handleFormReset = (evt) => {
-    evt.preventDefault();
-    // TODO: Реализовать отправку формы
+  #handleFormDelete = () => {
+    this.#handleEventDelete({event: this.#event});
   };
 
   resetView() {

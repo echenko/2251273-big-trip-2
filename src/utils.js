@@ -51,23 +51,50 @@ function isEscapeKey(evt) {
 }
 
 /**
- * Updates the item in the given array with the given update.
- * The update item is found by its id and replaced with the new item.
- * @param {array} array - Array containing the item to be updated.
- * @param {object} update - Item to be updated.
- * @returns {array} Updated array.
+ * Updates an event in an array by replacing the old event with the new one.
+ * If the event with the given id is not found, the array is returned unchanged.
+ * @param {array} array - Array of events to update.
+ * @param {object} element - New event to replace the old one.
+ * @returns {array} Updated array of events.
  */
-function updateItemInArray(array, update) {
-  return array.map((item) => (item.id === update.id ? update : item));
+function updateEventInArray(array, element) {
+  return array.map((item) => item.id === element.id ? element : item);
+}
+
+
+function deleteEventInArray(array, element) {
+  return array.filter((item) => item.id !== element.id);
+}
+
+
+function addOfferInArray(array, element) {
+  if (array.includes(element)) {
+    return array;
+  }
+  return [...array, element];
+}
+
+function deleteOfferInArray(array, element) {
+  return array.filter((item) => item !== element);
 }
 
 function sortEventsByType(events, type) {
   if (type === 'price') {
-    return events.sort((a, b) => b.point.basePrice - a.point.basePrice);
+    return events.sort((a, b) => b.basePrice - a.basePrice);
   } else if (type === 'time') {
-    return events.sort((a, b) => dayjs(b.point.dateTo).diff(dayjs(b.point.dateFrom)) - dayjs(a.point.dateTo).diff(dayjs(a.point.dateFrom)));
+    return events.sort((a, b) => dayjs(b.dateTo).diff(dayjs(b.dateFrom)) - dayjs(a.dateTo).diff(dayjs(a.dateFrom)));
   }
   return events;
 }
 
-export { getFormettedDate, getDurationTime, getRandomInt, isEscapeKey, updateItemInArray,sortEventsByType };
+export {
+  getFormettedDate,
+  getDurationTime,
+  getRandomInt,
+  isEscapeKey,
+  updateEventInArray,
+  deleteEventInArray,
+  addOfferInArray,
+  deleteOfferInArray,
+  sortEventsByType,
+};
