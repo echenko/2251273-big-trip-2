@@ -18,25 +18,31 @@ export default class EventPresentor {
   #eventComponent = null;
   #eventEditComponent = null;
   #eventAddComponent = null;
-
+  // Temp
   #event = null;
   #mode = EVENT_MODE.DEFAULT;
 
   constructor({
+    // Containers
     eventContainer,
+    // Models
     offersModel,
     destinationsModel,
+    // Handlers
     onDataChange,
     onModeChange,
   }) {
+    // Containers
     this.#eventContainer = eventContainer;
+    // Models
     this.#offersModel = offersModel;
     this.#destinationsModel = destinationsModel;
-
+    // Handlers
     this.#handleEventChange = onDataChange;
     this.#handleModeChange = onModeChange;
   }
 
+  // Инициализация события
   init(event) {
     this.#event = event;
 
@@ -46,6 +52,7 @@ export default class EventPresentor {
     this.#eventEditComponent = this.#createEventEditComponent();
   }
 
+  // Обновление события
   update(event) {
     this.#event = event;
 
@@ -62,27 +69,26 @@ export default class EventPresentor {
     this.#eventEditComponent = updatedEventEditComponent;
   }
 
+  // Добавление события
   add() {
     this.#eventAddComponent = this.#createEventAddComponent();
     render(this.#eventAddComponent, this.#eventContainer, RENDER_POSITION.AFTERBEGIN);
   }
 
+  // Создание компонента
   #createEventComponent() {
     return new EventPointView({
-      event: this.#event,
-      offersModel: this.#offersModel,
-      destinationsModel: this.#destinationsModel,
+      ...this.component,
       onSwitchToForm: this.#handleSwitchToForm,
       onFavoriteClick: this.#handleFavoriteClick
     }
     );
   }
 
+  // Создание компонента редактирования
   #createEventEditComponent() {
     return new EventPointEditView({
-      event: this.#event,
-      offersModel: this.#offersModel,
-      destinationsModel: this.#destinationsModel,
+      ...this.component,
       onSwitchToCard: this.#handleSwitchToCard,
       onSubmitForm: this.#handleFormSubmit,
       onDeleteForm: this.#handleFormDelete
@@ -90,36 +96,41 @@ export default class EventPresentor {
     );
   }
 
+  // Создание компонента добавления
   #createEventAddComponent() {
     return new EventPointAddView({
+      ...this.component,
       event: NEW_EVENT,
-      destinationsModel: this.#destinationsModel,
-      offersModel: this.#offersModel,
       onSubmitForm: this.#handleFormSubmit,
       onCancelForm: this.#handleFormCancel
     }
     );
   }
 
+  // Переключение режима на редактирование
   #switchToForm() {
     replace(this.#eventEditComponent, this.#eventComponent);
     this.#handleModeChange();
     this.#mode = EVENT_MODE.EDITING;
   }
 
+  // Переключение режима на просмотр
   #switchToCard() {
     replace(this.#eventComponent, this.#eventEditComponent);
     this.#mode = EVENT_MODE.DEFAULT;
   }
 
+  // Обработчик переключения на редактирование
   #handleSwitchToForm = () => {
     this.#switchToForm();
   };
 
+  // Обработчик переключения на просмотр
   #handleSwitchToCard = () => {
     this.#switchToCard();
   };
 
+  // Обработчик клика по избранному
   #handleFavoriteClick = () => {
     this.#event.isFavorite = !this.#event.isFavorite;
     this.#handleEventChange({
@@ -129,6 +140,7 @@ export default class EventPresentor {
     });
   };
 
+  // Обработчик отправки формы
   #handleFormSubmit = ({event}) => {
     this.#handleEventChange({
       actionType: USER_ACTION.UPDATE_TASK,
@@ -149,6 +161,7 @@ export default class EventPresentor {
     }
   };
 
+  // Обработчик удаления события
   #handleFormDelete = () => {
     this.#handleEventChange({
       actionType: USER_ACTION.DELETE_TASK,
@@ -157,6 +170,7 @@ export default class EventPresentor {
     });
   };
 
+  // Обработчик отмены события
   #handleFormCancel = () => {
     remove(this.#eventAddComponent);
     this.#eventAddComponent = null;
@@ -167,6 +181,7 @@ export default class EventPresentor {
     });
   };
 
+  // Сброс просмотра
   resetView() {
     if (this.#mode !== EVENT_MODE.DEFAULT) {
       this.#switchToCard();
@@ -174,9 +189,19 @@ export default class EventPresentor {
     }
   }
 
+  // Удаление компонентов
   destroy() {
     remove(this.#eventComponent);
     remove(this.#eventEditComponent);
+  }
+
+  // Получение компонентов
+  get component () {
+    return {
+      event: this.#event,
+      offersModel: this.#offersModel,
+      destinationsModel: this.#destinationsModel
+    };
   }
 
 }
