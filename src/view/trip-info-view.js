@@ -1,43 +1,57 @@
 import AbstractView from '../framework/view/abstract-view';
 
+import { getFirstEvent, getLastEvent, cutCityes } from '../utils.js';
+
 function createTripInfo({
-  allCitiesEvents,
-  startDate,
-  endDate,
-  fullPrice
+  eventsModel,
+  // offersModel,
+  destinationsModel,
 }) {
+  const firstEvent = getFirstEvent(eventsModel.allEvents);
+  const lastEvent = getLastEvent(eventsModel.allEvents);
+  const fisrtEventDate = firstEvent.dateFrom;
+  const lastEventDate = lastEvent.dateTo;
+  const allCities = eventsModel.allEvents.map((event) => destinationsModel.getDestinationById(event.destination).name);
+
 
   return (`
           <section class="trip-main__trip-info  trip-info">
             <div class="trip-info__main">
-              <h1 class="trip-info__title">${allCitiesEvents.join(' &mdash; ')}</h1>
+              <h1 class="trip-info__title">${cutCityes(allCities)}</h1>
 
-              <p class="trip-info__dates">${startDate}&mdash;${endDate}</p>
+              <p class="trip-info__dates">${ fisrtEventDate }&mdash;${ lastEventDate }</p>
             </div>
 
             <p class="trip-info__cost">
-              Total: &euro;&nbsp;<span class="trip-info__cost-value">${fullPrice}</span>
+              Total: &euro;&nbsp;<span class="trip-info__cost-value">${eventsModel.totalPrice}</span>
             </p>
           </section>
         `);
 }
 
 export default class TripInfoView extends AbstractView {
+  // Models
+  #eventsModel = null;
+  // #offersModel = null;
+  #destinationsModel = null;
 
-  constructor({allCitiesEvents, startDate, endDate, fullPrice}) {
+  constructor({
+    // Models
+    eventsModel,
+    // offersModel,
+    destinationsModel,
+  }) {
     super();
-    this.allCitiesEvents = allCitiesEvents;
-    this.startDate = startDate;
-    this.endDate = endDate;
-    this.fullPrice = fullPrice;
+    this.#eventsModel = eventsModel;
+    // this.#offersModel = offersModel;
+    this.#destinationsModel = destinationsModel;
   }
 
   get template() {
     return createTripInfo({
-      allCitiesEvents: this.allCitiesEvents,
-      startDate: this.startDate,
-      endDate: this.endDate,
-      fullPrice: this.fullPrice
+      eventsModel: this.#eventsModel,
+      // offersModel: this.#offersModel,
+      destinationsModel: this.#destinationsModel,
     });
   }
 

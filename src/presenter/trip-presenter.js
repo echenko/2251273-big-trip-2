@@ -1,18 +1,42 @@
 import TripInfoView from '../view/trip-info-view.js';
 import TripFilterView from '../view/trip-filter-view.js';
 
-import {render} from '../framework/render.js';
+import {remove, render} from '../framework/render.js';
+
 import { ALL_TYPES_FILTERS } from '../const.js';
 
 export default class TripPresenter {
-  #tripContainer = null;
+  #tripInfoContainer = null;
   #tripFilterContainer = null;
-  #eventsModel = null;
 
-  constructor({tripInfoContainer, tripFilterContainer, eventsModel}) {
-    this.#tripContainer = tripInfoContainer;
+  #tripInfo = null;
+  #tripFilter = null;
+
+  #eventsModel = null;
+  #offersModel = null;
+  #destinationsModel = null;
+
+  #handleEventChange = null;
+
+  constructor({
+    // Containers
+    tripInfoContainer,
+    tripFilterContainer,
+    // Models
+    eventsModel,
+    offersModel,
+    destinationsModel,
+    // Handlers
+    onDataChange
+  }) {
+    // Containers
+    this.#tripInfoContainer = tripInfoContainer;
     this.#tripFilterContainer = tripFilterContainer;
+    // Models
     this.#eventsModel = eventsModel;
+    this.#offersModel = offersModel;
+    this.#destinationsModel = destinationsModel;
+    this.#handleEventChange = onDataChange;
   }
 
   init() {
@@ -20,26 +44,36 @@ export default class TripPresenter {
     this.#renderTripFilter();
   }
 
+  update() {
+    this.destroy();
+    this.init();
+  }
+
   #renderTripInfo() {
-    this.tripInfo = new TripInfoView({
-      allCitiesEvents: this.#eventsModel.allCitiesEvents,
-      startDate: this.#eventsModel.minEventsDate,
-      endDate: this.#eventsModel.maxEventsDate,
-      fullPrice: this.#eventsModel.fullPrice
+    this.#tripInfo = new TripInfoView({
+      eventsModel: this.#eventsModel,
+      offersModel: this.#offersModel,
+      destinationsModel: this.#destinationsModel
     });
 
-    render(this.tripInfo, this.#tripContainer, 'AFTERBEGIN');
+    render(this.#tripInfo, this.#tripInfoContainer, 'AFTERBEGIN');
   }
 
   #renderTripFilter() {
-    this.tripFilter = new TripFilterView({
+    this.#tripFilter = new TripFilterView({
       allTypesFilters: ALL_TYPES_FILTERS,
-      onFilterTypeChange: (evt) => {
-        evt.preventDefault();
-        // TODO: Обработать событие
-      }
+      eventsModel: this.#eventsModel,
+      offersModel: this.#offersModel,
+      destinationsModel: this.#destinationsModel
+
     });
-    render(this.tripFilter, this.#tripFilterContainer, 'BEFOREEND');
+
+    render(this.#tripFilter, this.#tripFilterContainer, 'BEFOREEND');
+  }
+
+  destroy() {
+    remove(this.#tripInfo);
+    remove(this.#tripFilter);
   }
 
 }

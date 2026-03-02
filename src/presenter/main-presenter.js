@@ -1,5 +1,6 @@
 import EventPresenter from './event-presenter.js';
 import SortPresenter from './sort-presenter.js';
+import TripPresenter from './trip-presenter.js';
 
 import EventListView from '../view/event-list-view.js';
 
@@ -12,8 +13,10 @@ const newEventButton = document.querySelector('.trip-main__event-add-btn');
 
 export default class MainPresenter {
   // Containers
-  #eventContainer = null;
   #eventListContainer = new EventListView();
+  #eventContainer = null;
+  #tripInfoContainer = null;
+  #tripFilterContainer = null;
   // Models
   #eventsModel = null;
   #offersModel = null;
@@ -21,20 +24,29 @@ export default class MainPresenter {
   // Presenters
   #eventsPresentor = new Map();
   #sortPresenter = null;
+  #tripPresenter = null;
   // Temp
   #currentSortType = 'day';
 
   constructor({
+    // Containers
     eventContainer,
+    tripInfoContainer,
+    tripFilterContainer,
+    // Models
     eventsModel,
     offersModel,
     destinationsModel
   }) {
+    // Containers
     this.#eventContainer = eventContainer;
+    this.#tripInfoContainer = tripInfoContainer;
+    this.#tripFilterContainer = tripFilterContainer;
+    // Models
     this.#eventsModel = eventsModel;
     this.#offersModel = offersModel;
     this.#destinationsModel = destinationsModel;
-
+    // Observer
     this.#eventsModel.addObserver(this.#handleModelEvent);
   }
 
@@ -52,6 +64,7 @@ export default class MainPresenter {
   };
 
   #handleModelEvent = (updateType, data) => {
+    this.#tripPresenter.update();
     if (updateType === UPDATE_TYPE.PATCH) {
       this.#eventsPresentor.get(data.id).update(data);
     } else if (updateType === UPDATE_TYPE.MINOR) {
@@ -74,6 +87,21 @@ export default class MainPresenter {
     this.#renderAllEvents(this.events);
     // Обработчики
     this.#handleNewEventClick();
+    // Отрисовка
+    this.#createTripPresenter();
+  }
+
+  //
+  #createTripPresenter() {
+    this.#tripPresenter = new TripPresenter({
+      tripInfoContainer: this.#tripInfoContainer,
+      tripFilterContainer: this.#tripFilterContainer,
+      eventsModel: this.#eventsModel,
+      offersModel: this.#offersModel,
+      destinationsModel: this.#destinationsModel,
+      onDataChange: this.#handleViewAction,
+    });
+    this.#tripPresenter.init();
   }
 
   // Отрисовываем список событий

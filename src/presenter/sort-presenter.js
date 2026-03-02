@@ -9,7 +9,9 @@ export default class SortPresenter {
   #eventSort = null;
   #onSortChange = null;
 
-  constructor({sortListContainer, onSortChange}) {
+  constructor({
+    sortListContainer,
+    onSortChange}){
     this.#sortListContainer = sortListContainer;
     this.#onSortChange = onSortChange;
   }

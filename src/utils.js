@@ -93,6 +93,24 @@ function generateUniqueEventId(array) {
   return array.includes(id) ? generateUniqueEventId(array) : id;
 }
 
+function getFirstEvent(events) {
+  return events.sort((a, b) => dayjs(a.dateFrom).diff(dayjs(b.dateFrom))).at(0);
+}
+
+function getLastEvent(events) {
+  return events.sort((a, b) => dayjs(b.dateFrom).diff(dayjs(a.dateFrom))).at(0);
+}
+
+function cutCityes(array) {
+  if (array.length > 3) {
+    return [array.at(0),'...', array.at(-1)].join(' &mdash; ');
+  } else if (array.length > 1) {
+    return array.join(' &mdash; ');
+  }
+  return array;
+}
+
+
 export {
   getFormettedDate,
   getDurationTime,
@@ -104,4 +122,7 @@ export {
   deleteOfferInArray,
   sortEventsByType,
   generateUniqueEventId,
+  getFirstEvent,
+  getLastEvent,
+  cutCityes,
 };

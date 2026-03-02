@@ -1,6 +1,11 @@
 import AbstractView from '../framework/view/abstract-view';
 
-function createTripFilter({allTypesFilters}) {
+function createTripFilter({
+  allTypesFilters,
+  // eventsModel,
+  // offersModel,
+  // destinationsModel
+}) {
   return (`
           <form class="trip-filters" action="#" method="get">
           ${allTypesFilters.map((type) => `
@@ -15,16 +20,33 @@ function createTripFilter({allTypesFilters}) {
 }
 
 export default class TripFilterView extends AbstractView {
-  constructor({allTypesFilters, onFilterTypeChange}) {
-    super();
-    this.allTypesFilters = allTypesFilters;
-    this.onFilterTypeChange = onFilterTypeChange;
+  #allTypesFilters = null;
+  #eventsModel = null;
+  // #offersModel = null;
+  #destinationsModel = null;
 
-    this.element.addEventListener('change', this.onFilterTypeChange);
+  constructor({
+    allTypesFilters,
+    // Models
+    // eventsModel,
+    // offersModel,
+    // destinationsModel,
+  }) {
+    super();
+    this.#allTypesFilters = allTypesFilters;
+    // Models
+    // this.#eventsModel = eventsModel;
+    // this.#offersModel = offersModel;
+    // this.#destinationsModel = destinationsModel;
   }
 
   get template() {
-    return createTripFilter({allTypesFilters: this.allTypesFilters});
+    return createTripFilter({
+      allTypesFilters: this.#allTypesFilters,
+      // eventsModel: this.#eventsModel,
+      // offersModel: this.#offersModel,
+      // destinationsModel: this.#destinationsModel
+    });
   }
 
 }

@@ -49,4 +49,12 @@ export default class EventsModel extends Observable {
   get allEventsId() {
     return this.#events.map((item) => item.id);
   }
+
+  get totalPrice() {
+    return this.#events.reduce((acc, item) => acc + item.basePrice, 0);
+  }
+
+  get endDate() {
+    return this.#events.reduce((acc, item) => acc > item.dateTo ? acc : item.dateTo, this.#events[0].dateTo);
+  }
 }
