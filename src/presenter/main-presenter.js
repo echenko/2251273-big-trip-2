@@ -6,7 +6,7 @@ import EventListView from '../view/event-list-view.js';
 
 import { render } from '../framework/render.js';
 
-import { sortEventsByType, } from '../utils.js';
+import { sortEventsByType, filterEventsByType } from '../utils.js';
 import { USER_ACTION, UPDATE_TYPE, NEW_EVENT } from '../const.js';
 
 const newEventButton = document.querySelector('.trip-main__event-add-btn');
@@ -27,6 +27,7 @@ export default class MainPresenter {
   #tripPresenter = null;
   // Temp
   #currentSortType = 'day';
+  #currentFilterType = 'everything';
 
   constructor({
     // Containers
@@ -51,6 +52,8 @@ export default class MainPresenter {
   }
 
   #handleViewAction = ({ actionType, updateType, update }) => {
+    this.#resetFilter();
+    this.#resetSort();
     if (actionType === USER_ACTION.UPDATE_TASK) {
       this.#eventsModel.updateEvent(updateType, update);
     } else if (actionType === USER_ACTION.ADD_TASK) {
@@ -99,7 +102,7 @@ export default class MainPresenter {
       eventsModel: this.#eventsModel,
       offersModel: this.#offersModel,
       destinationsModel: this.#destinationsModel,
-      onDataChange: this.#handleViewAction,
+      onFilterChange: this.#handleFilterChange
     });
     this.#tripPresenter.init();
   }
@@ -125,7 +128,7 @@ export default class MainPresenter {
   }
 
   // Отрисовываем все события
-  #renderAllEvents(eventsList = this.events) {
+  #renderAllEvents(eventsList) {
     eventsList.forEach((event) => {
       this.#renderEvent(event);
     });
@@ -169,18 +172,37 @@ export default class MainPresenter {
   };
 
   // Обработчик сортировки
-  #handleSortChange = ({ sortType }) => {
+  #handleSortChange = ({sortType}) => {
     if (this.#currentSortType === sortType) {
       return;
     }
+
     this.#currentSortType = sortType;
-    if (this.#currentSortType === 'day') {
-      this.#clearEvents();
-      this.#renderAllEvents(this.events);
-    } else {
-      this.#clearEvents();
-      this.#renderAllEvents(sortEventsByType(structuredClone(this.events), sortType));
+    this.#clearEvents();
+    this.#renderAllEvents(this.events);
+  };
+
+  // Сброс сортировки
+  #resetSort = () => {
+    this.#currentSortType = 'day';
+    this.#sortPresenter.update();
+  };
+
+  // Обработчик фильтра
+  #handleFilterChange = ({filterType}) => {
+    if (this.#currentFilterType === filterType) {
+      return;
     }
+
+    this.#currentFilterType = filterType;
+    this.#clearEvents();
+    this.#renderAllEvents(this.events);
+  };
+
+  // Сброс фильтра
+  #resetFilter = () => {
+    this.#currentFilterType = 'everything';
+    this.#tripPresenter.update();
   };
 
   // Очистка событий
@@ -201,10 +223,9 @@ export default class MainPresenter {
 
   // Получаем события
   get events() {
-    if (this.#currentSortType === 'day') {
-      return this.#eventsModel.allEvents;
-    } else {
-      return sortEventsByType(structuredClone(this.#eventsModel.allEvents), this.#currentSortType);
-    }
+    return sortEventsByType(
+      filterEventsByType(
+        structuredClone(this.#eventsModel.allEvents), this.#currentFilterType),
+      this.#currentSortType);
   }
 }

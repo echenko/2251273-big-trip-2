@@ -110,6 +110,17 @@ function cutCityes(array) {
   return array;
 }
 
+function filterEventsByType(array, type) {
+  const currentDate = dayjs();
+  if (type === 'future') {
+    return array.filter((item) => dayjs(item.dateFrom).isAfter(currentDate));
+  } else if (type === 'present') {
+    return array.filter((item) => dayjs(item.dateFrom).isBefore(currentDate) && dayjs(item.dateTo).isAfter(currentDate));
+  } else if (type === 'past') {
+    return array.filter((item) => dayjs(item.dateTo).isBefore(currentDate));
+  }
+  return array;
+}
 
 export {
   getFormettedDate,
@@ -125,4 +136,5 @@ export {
   getFirstEvent,
   getLastEvent,
   cutCityes,
+  filterEventsByType,
 };

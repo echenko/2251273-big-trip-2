@@ -16,7 +16,7 @@ export default class TripPresenter {
   #offersModel = null;
   #destinationsModel = null;
 
-  #handleEventChange = null;
+  #handleFilterChange = null;
 
   constructor({
     // Containers
@@ -27,7 +27,7 @@ export default class TripPresenter {
     offersModel,
     destinationsModel,
     // Handlers
-    onDataChange
+    onFilterChange
   }) {
     // Containers
     this.#tripInfoContainer = tripInfoContainer;
@@ -36,7 +36,7 @@ export default class TripPresenter {
     this.#eventsModel = eventsModel;
     this.#offersModel = offersModel;
     this.#destinationsModel = destinationsModel;
-    this.#handleEventChange = onDataChange;
+    this.#handleFilterChange = onFilterChange;
   }
 
   init() {
@@ -64,8 +64,8 @@ export default class TripPresenter {
       allTypesFilters: ALL_TYPES_FILTERS,
       eventsModel: this.#eventsModel,
       offersModel: this.#offersModel,
-      destinationsModel: this.#destinationsModel
-
+      destinationsModel: this.#destinationsModel,
+      onFilterChange: this.#handleFilterChange
     });
 
     render(this.#tripFilter, this.#tripFilterContainer, 'BEFOREEND');
