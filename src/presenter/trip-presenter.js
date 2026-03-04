@@ -18,6 +18,8 @@ export default class TripPresenter {
 
   #handleFilterChange = null;
 
+  #currentFilterType = null;
+
   constructor({
     // Containers
     tripInfoContainer,
@@ -27,7 +29,7 @@ export default class TripPresenter {
     offersModel,
     destinationsModel,
     // Handlers
-    onFilterChange
+    onFilterChange,
   }) {
     // Containers
     this.#tripInfoContainer = tripInfoContainer;
@@ -39,33 +41,32 @@ export default class TripPresenter {
     this.#handleFilterChange = onFilterChange;
   }
 
-  init() {
+  init(currentFilterType) {
+    this.#currentFilterType = currentFilterType;
     this.#renderTripInfo();
     this.#renderTripFilter();
   }
 
-  update() {
+  update(currentFilterType) {
+    this.#currentFilterType = currentFilterType;
     this.destroy();
-    this.init();
+    this.#renderTripInfo();
+    this.#renderTripFilter();
   }
 
   #renderTripInfo() {
     this.#tripInfo = new TripInfoView({
       eventsModel: this.#eventsModel,
-      offersModel: this.#offersModel,
       destinationsModel: this.#destinationsModel
     });
-
     render(this.#tripInfo, this.#tripInfoContainer, 'AFTERBEGIN');
   }
 
   #renderTripFilter() {
     this.#tripFilter = new TripFilterView({
       allTypesFilters: ALL_TYPES_FILTERS,
-      eventsModel: this.#eventsModel,
-      offersModel: this.#offersModel,
-      destinationsModel: this.#destinationsModel,
-      onFilterChange: this.#handleFilterChange
+      onFilterChange: this.#handleFilterChange,
+      currentFilterType: this.#currentFilterType,
     });
 
     render(this.#tripFilter, this.#tripFilterContainer, 'BEFOREEND');

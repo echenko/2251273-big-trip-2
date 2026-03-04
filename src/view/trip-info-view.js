@@ -5,13 +5,12 @@ import { DateFormat } from '../const.js';
 
 function createTripInfo({
   eventsModel,
-  // offersModel,
   destinationsModel,
 }) {
   const firstEvent = getFirstEvent(eventsModel.allEvents);
   const lastEvent = getLastEvent(eventsModel.allEvents);
-  const fisrtEventDate = firstEvent.dateFrom;
-  const lastEventDate = lastEvent.dateTo;
+  const fisrtEventDate = firstEvent?.dateFrom;
+  const lastEventDate = lastEvent?.dateTo;
   const allCities = eventsModel.allEvents.map((event) => destinationsModel.getDestinationById(event.destination).name);
 
 
@@ -19,8 +18,7 @@ function createTripInfo({
           <section class="trip-main__trip-info  trip-info">
             <div class="trip-info__main">
               <h1 class="trip-info__title">${cutCityes(allCities)}</h1>
-
-              <p class="trip-info__dates">${ getFormettedDate(fisrtEventDate, DateFormat.eventDate) } &mdash; ${ getFormettedDate(lastEventDate, DateFormat.eventDate) }</p>
+              ${fisrtEventDate && lastEventDate ? `<p class="trip-info__dates">${ getFormettedDate(fisrtEventDate, DateFormat.eventDate) } &mdash; ${ getFormettedDate(lastEventDate, DateFormat.eventDate) }</p>` : ''}
             </div>
 
             <p class="trip-info__cost">
@@ -33,9 +31,7 @@ function createTripInfo({
 export default class TripInfoView extends AbstractView {
   // Models
   #eventsModel = null;
-  // #offersModel = null;
   #destinationsModel = null;
-
   constructor({
     // Models
     eventsModel,
@@ -44,14 +40,12 @@ export default class TripInfoView extends AbstractView {
   }) {
     super();
     this.#eventsModel = eventsModel;
-    // this.#offersModel = offersModel;
     this.#destinationsModel = destinationsModel;
   }
 
   get template() {
     return createTripInfo({
       eventsModel: this.#eventsModel,
-      // offersModel: this.#offersModel,
       destinationsModel: this.#destinationsModel,
     });
   }
