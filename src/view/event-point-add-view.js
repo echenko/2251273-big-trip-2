@@ -1,9 +1,10 @@
 import AbstractView from '../framework/view/abstract-stateful-view.js';
 
-import { getFormettedDate, addOfferInArray, deleteOfferInArray } from '../utils.js';
+import { getFormettedDate, addOfferInArray, deleteOfferInArray, getNumberFromString } from '../utils.js';
 import { DateFormat, TypePoint } from '../const.js';
 
 import flatpickr from 'flatpickr';
+import he from 'he';
 import dayjs from 'dayjs';
 
 function crateEventTypeList({ event, destinationsModel }) {
@@ -188,6 +189,8 @@ export default class EventPointAddView extends AbstractView {
   }
 
   _restoreHandlers() {
+    const eventSaveButton = this.element.querySelector('.event__save-btn');
+
     this.element.querySelector('.event').addEventListener('submit', (evt) => {
       evt.preventDefault();
       this.#onSubmitForm({event:this._state});
@@ -210,10 +213,15 @@ export default class EventPointAddView extends AbstractView {
       });
     });
 
-    this.element.querySelector('.event__input--destination').addEventListener('change', () => {
-      const value = this.element.querySelector('.event__input--destination').value;
-      this._state.destination = this.#destinationsModel.getIdByName(value);
-      this.#updateState();
+    this.element.querySelector('.event__input--destination').addEventListener('input', () => {
+      const value = he.encode(this.element.querySelector('.event__input--destination').value);
+      this._state.destination = this.#destinationsModel.getIdByName(value) || null;
+      eventSaveButton.disabled = !this._state.destination;
+    });
+
+    this.element.querySelector('.event__input--price').addEventListener('input', () => {
+      this._state.basePrice = getNumberFromString(this.element.querySelector('.event__input--price').value);
+      this.element.querySelector('.event__input--price').value = this._state.basePrice;
     });
 
     this.#setDateFrom();

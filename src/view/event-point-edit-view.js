@@ -4,6 +4,7 @@ import { getFormettedDate, addOfferInArray, deleteOfferInArray, getNumberFromStr
 import { DateFormat, TypePoint } from '../const.js';
 
 import flatpickr from 'flatpickr';
+import he from 'he';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
@@ -195,6 +196,8 @@ export default class EventPointEditView extends AbstractStatefulView {
   }
 
   _restoreHandlers() {
+    const eventSaveButton = this.element.querySelector('.event__save-btn');
+
     this.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
       this._setState(this.#event);
       this.#updateState(this._setState);
@@ -220,14 +223,10 @@ export default class EventPointEditView extends AbstractStatefulView {
       });
     });
 
-    this.element.querySelector('.event__input--destination').addEventListener('click', () => {
-      this.element.querySelector('.event__input--destination').value = '';
-    });
-
-    this.element.querySelector('.event__input--destination').addEventListener('change', () => {
-      const value = this.element.querySelector('.event__input--destination').value;
-      this._state.destination = this.#destinationsModel.getIdByName(value);
-      this.#updateState();
+    this.element.querySelector('.event__input--destination').addEventListener('input', () => {
+      const value = he.encode(this.element.querySelector('.event__input--destination').value);
+      this._state.destination = this.#destinationsModel.getIdByName(value) || null;
+      eventSaveButton.disabled = !this._state.destination;
     });
 
     this.element.querySelector('.event__input--price').addEventListener('input', () => {
