@@ -193,6 +193,7 @@ export default class EventPresentor {
   destroy() {
     remove(this.#eventComponent);
     remove(this.#eventEditComponent);
+    remove(this.#eventAddComponent);
   }
 
   // Получение компонентов
