@@ -22,7 +22,7 @@ function createTripInfo({
             </div>
 
             <p class="trip-info__cost">
-              Total: &euro;&nbsp;<span class="trip-info__cost-value">${eventsModel.totalPrice}</span>
+              Total: &euro;&nbsp;<span class="trip-info__cost-value">${eventsModel.totalPrice || 0}</span>
             </p>
           </section>
         `);

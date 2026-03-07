@@ -282,12 +282,10 @@ export default class EventPointEditView extends AbstractStatefulView {
 
   #dateFromChangeHandler = (userDate) => {
     this._state.dateFrom = userDate.at(0);
-    this.#updateState();
   };
 
   #dateToChangeHandler = (userDate) => {
     this._state.dateTo = userDate.at(0);
-    this.#updateState();
   };
 
 }

@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-stateful-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 
 import { getFormettedDate, addOfferInArray, deleteOfferInArray, getNumberFromString } from '../utils.js';
 import { DateFormat, TypePoint } from '../const.js';
@@ -147,7 +147,7 @@ function createEventPointAdd({
         `);
 }
 
-export default class EventPointAddView extends AbstractView {
+export default class EventPointAddView extends AbstractStatefulView {
   #event = null;
 
   #offersModel = null;
@@ -181,6 +181,9 @@ export default class EventPointAddView extends AbstractView {
   }
 
   get template() {
+    this._state.dateFrom = dayjs().toISOString();
+    this._state.dateTo = dayjs().add(1, 'day').toISOString();
+
     return createEventPointAdd({
       event: this._state,
       offersModel: this.#offersModel,
@@ -247,7 +250,6 @@ export default class EventPointAddView extends AbstractView {
   };
 
   #setDateFrom = () => {
-    this._state.dateFrom = dayjs().toISOString();
     if (this._state.dateFrom) {
       this.#dateFrom = flatpickr(this.element.querySelector('#event-start-time-1'), {
         enableTime: true,
@@ -260,7 +262,6 @@ export default class EventPointAddView extends AbstractView {
   };
 
   #setDateTo = () => {
-    this._state.dateTo = dayjs().add(1, 'day').toISOString();
     if (this._state.dateTo) {
       this.#dateTo = flatpickr(this.element.querySelector('#event-end-time-1'), {
         enableTime: true,
@@ -272,14 +273,12 @@ export default class EventPointAddView extends AbstractView {
     }
   };
 
-  #dateFromChangeHandler = (userDate) => {
-    this._state.dateFrom = userDate.at(0);
-    this.#updateState();
+  #dateFromChangeHandler = (selectedDates) => {
+    this._state.dateFrom = selectedDates[0].toISOString();
   };
 
-  #dateToChangeHandler = (userDate) => {
-    this._state.dateTo = userDate.at(0);
-    this.#updateState();
+  #dateToChangeHandler = (selectedDates) => {
+    this._state.dateTo = selectedDates[0].toISOString();
   };
 
 }

@@ -54,7 +54,4 @@ export default class EventsModel extends Observable {
     return this.#events.reduce((acc, item) => acc + item.basePrice, 0);
   }
 
-  get endDate() {
-    return this.#events.reduce((acc, item) => acc > item.dateTo ? acc : item.dateTo, this.#events[0].dateTo);
-  }
 }

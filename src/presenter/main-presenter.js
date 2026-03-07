@@ -1,15 +1,15 @@
+// Presenters
 import EventPresenter from './event-presenter.js';
 import SortPresenter from './sort-presenter.js';
 import TripPresenter from './trip-presenter.js';
-
+// Views
 import EventListView from '../view/event-list-view.js';
 import ListEmptyView from '../view/list-empty-view.js';
-
+// Utils
 import { remove, render } from '../framework/render.js';
-
-import { sortEventsByType, filterEventsByType } from '../utils.js';
+import { sortEventsByType, filterEventsByType, isEscapeKey } from '../utils.js';
 import { USER_ACTION, UPDATE_TYPE, NEW_EVENT,ERROR_MESSAGE } from '../const.js';
-
+// DOM
 const newEventButton = document.querySelector('.trip-main__event-add-btn');
 
 export default class MainPresenter {
@@ -24,6 +24,7 @@ export default class MainPresenter {
   #destinationsModel = null;
   // Presenters
   #eventsPresentor = new Map();
+  #newEventPresentor = null;
   #sortPresenter = null;
   #tripPresenter = null;
   // Temp
@@ -55,7 +56,6 @@ export default class MainPresenter {
   }
 
   #handleViewAction = ({ actionType, updateType, update }) => {
-    // this.#tripPresenter.update();
     if (actionType === USER_ACTION.UPDATE_TASK) {
       this.#eventsModel.updateEvent(updateType, update);
     } else if (actionType === USER_ACTION.ADD_TASK) {
@@ -87,7 +87,7 @@ export default class MainPresenter {
     this.#eventsModel.init();
     this.#offersModel.init();
     this.#destinationsModel.init();
-    //
+    // Создание
     this.#createSortEvent();
     this.#createTripPresenter();
     // Отрисовка
@@ -95,8 +95,8 @@ export default class MainPresenter {
     this.#renderAllEvents(this.events);
     // Обработчики
     this.#handleNewEventClick();
-    // this.#sortPresenter.init();
     this.#tripPresenter.init(this.#currentFilterType);
+    document.addEventListener('keydown', this.#handleKeyDown);
   }
 
   // Отрисовываем пустой список
@@ -106,17 +106,6 @@ export default class MainPresenter {
       errorMessage: ERROR_MESSAGE[typeErrorMessage]
     });
     render(this.#listEmptyView, this.#eventContainer);
-  }
-
-  // Отрисовываем сортировку
-  #createSortEvent() {
-    this.#sortPresenter = new SortPresenter({
-      sortListContainer: this.#eventContainer,
-      onSortChange: this.#handleSortChange,
-    });
-    if(this.events.length > 0) {
-      this.#sortPresenter.init();
-    }
   }
 
   // Создаем презентер поездки
@@ -131,6 +120,33 @@ export default class MainPresenter {
     });
   }
 
+  // Создаем презентер сортировки
+  #createSortEvent() {
+    this.#sortPresenter = new SortPresenter({
+      sortListContainer: this.#eventContainer,
+      onSortChange: this.#handleSortChange,
+    });
+    if(this.events.length > 0) {
+      this.#sortPresenter.init();
+    }
+  }
+
+  // Создаем презентер события
+  #createEventPresentor() {
+    const eventPresentor = new EventPresenter({
+      // Containers
+      eventContainer: this.#eventListContainer.element,
+      // Models
+      eventsModel: this.#eventsModel,
+      offersModel: this.#offersModel,
+      destinationsModel: this.#destinationsModel,
+      // Handlers
+      onDataChange: this.#handleViewAction,
+      onModeChange: this.#handleModeChange,
+    });
+    return eventPresentor;
+  }
+
   // Отрисовываем список событий
   #renderEventsListContainer() {
     render(this.#eventListContainer, this.#eventContainer);
@@ -142,6 +158,8 @@ export default class MainPresenter {
     if (eventsList.length === 0) {
       this.#createListEmpty();
       return;
+    } else {
+      remove(this.#listEmptyView);
     }
     eventsList.forEach((event) => {
       this.#renderEvent(event);
@@ -166,24 +184,8 @@ export default class MainPresenter {
 
   // Создаем новое событие
   #createNewEvent(event = NEW_EVENT) {
-    const eventPresentor = this.#createEventPresentor();
-    eventPresentor.add({event});
-  }
-
-  // Создаем презентер события
-  #createEventPresentor() {
-    const eventPresentor = new EventPresenter({
-      // Containers
-      eventContainer: this.#eventListContainer.element,
-      // Models
-      eventsModel: this.#eventsModel,
-      offersModel: this.#offersModel,
-      destinationsModel: this.#destinationsModel,
-      // Handlers
-      onDataChange: this.#handleViewAction,
-      onModeChange: this.#handleModeChange,
-    });
-    return eventPresentor;
+    this.#newEventPresentor = this.#createEventPresentor();
+    this.#newEventPresentor.add({event});
   }
 
   // Сбрасываем режим редактирования
@@ -239,11 +241,20 @@ export default class MainPresenter {
     newEventButton.disabled = false;
   };
 
-  // Получаем события
+  #handleKeyDown = (evt) => {
+    if (isEscapeKey(evt)) {
+      this.#newButtonEnabled();
+      this.#handleModeChange();
+      this.#newEventPresentor.destroy();
+    }
+  };
+
+  // Получаем события после сортировки и фильтра
   get events() {
     return sortEventsByType(
       filterEventsByType(
         structuredClone(this.#eventsModel.allEvents), this.#currentFilterType),
       this.#currentSortType);
   }
+
 }
