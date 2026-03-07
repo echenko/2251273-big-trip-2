@@ -193,17 +193,9 @@ export default class EventPresentor {
   destroy() {
     remove(this.#eventComponent);
     remove(this.#eventEditComponent);
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
+
     remove(this.#eventAddComponent);
-=======
->>>>>>> 628cce4 (fix: calendar, add: esc)
-=======
->>>>>>> 628cce4 (fix: calendar, add: esc)
-=======
     remove(this.#eventAddComponent);
->>>>>>> ff1ca2a (fix: calendar, add: esc)
   }
 
   // Получение компонентов
