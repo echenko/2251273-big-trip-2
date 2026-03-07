@@ -191,9 +191,20 @@ export default class EventPresentor {
 
   // Удаление компонентов
   destroy() {
-    remove(this.#eventComponent);
-    remove(this.#eventEditComponent);
-    remove(this.#eventAddComponent);
+    if (this.#eventAddComponent) {
+      remove(this.#eventAddComponent);
+      this.#eventAddComponent = null;
+    }
+
+    if (this.#eventComponent) {
+      remove(this.#eventComponent);
+      this.#eventComponent = null;
+    }
+
+    if (this.#eventEditComponent) {
+      remove(this.#eventEditComponent);
+      this.#eventEditComponent = null;
+    }
   }
 
   // Получение компонентов
