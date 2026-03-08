@@ -181,8 +181,8 @@ export default class EventPointAddView extends AbstractStatefulView {
   }
 
   get template() {
-    this._state.dateFrom = dayjs().toISOString();
-    this._state.dateTo = dayjs().add(1, 'day').toISOString();
+    this._state.dateFrom = this._state.dateFrom || dayjs().toISOString();
+    this._state.dateTo = this._state.dateTo || dayjs().add(1, 'day').toISOString();
 
     return createEventPointAdd({
       event: this._state,
