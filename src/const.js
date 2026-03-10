@@ -89,6 +89,13 @@ const ERROR_MESSAGE = {
   FUTURE: 'There are no future events now',
 };
 
+const METHOD_API = {
+  GET: 'GET',
+  POST: 'POST',
+  PUT: 'PUT',
+  DELETE: 'DELETE',
+};
+
 export {
   MAX_POINTS,
   TypePoint,
@@ -100,5 +107,6 @@ export {
   UPDATE_TYPE,
   NEW_EVENT,
   RENDER_POSITION,
-  ERROR_MESSAGE
+  ERROR_MESSAGE,
+  METHOD_API
 };
