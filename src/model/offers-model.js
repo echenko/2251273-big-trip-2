@@ -13,7 +13,6 @@ export default class OffersModel extends Observable {
   }
 
   async init() {
-
     try {
       this.#offers = await this.#offersApiService.offers();
     } catch (err) {
@@ -23,7 +22,11 @@ export default class OffersModel extends Observable {
   }
 
   getOfferByType(type) {
-    return this.#offers.find((offer) => offer.type === type).offers || null;
+    return this.#offers.find((offer) => offer.type === type).offers;
+  }
+
+  get offers() {
+    return this.#offers || [];
   }
 
 }

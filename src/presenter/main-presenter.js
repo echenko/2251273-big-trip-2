@@ -13,6 +13,7 @@ import { USER_ACTION, UPDATE_TYPE, NEW_EVENT,ERROR_MESSAGE } from '../const.js';
 const newEventButton = document.querySelector('.trip-main__event-add-btn');
 
 export default class MainPresenter {
+  #events = null;
   // Containers
   #eventListContainer = new EventListView();
   #eventContainer = null;
@@ -79,7 +80,13 @@ export default class MainPresenter {
     } else if (updateType === UPDATE_TYPE.MAJOR) {
       // TODO: Доработать!
     } else if (updateType === UPDATE_TYPE.INIT) {
-      // console.log('INIT');
+      console.log('init');
+      const events = this.#eventsModel.allEvents;
+      console.log(this.events);
+      // this.events(events);
+      // console.log(this.#eventsModel.allEvents);
+      // this.events(this.#eventsModel.allEvents);
+      // console.log(this.events);
     }
   };
 
@@ -89,13 +96,12 @@ export default class MainPresenter {
     this.#eventsModel.init();
     this.#offersModel.init();
     this.#destinationsModel.init();
-    console.log(this.events);
     // Создание
     this.#createSortEvent();
     this.#createTripPresenter();
     // Отрисовка
     this.#renderEventsListContainer();
-    this.#renderAllEvents(this.events);
+    // this.#renderAllEvents(this.#events);
     // Обработчики
     // this.#handleNewEventClick();
     // this.#tripPresenter.init(this.#currentFilterType);
@@ -140,7 +146,7 @@ export default class MainPresenter {
       // Containers
       eventContainer: this.#eventListContainer.element,
       // Models
-      // eventsModel: this.#eventsModel,
+      eventsModel: this.#eventsModel,
       offersModel: this.#offersModel,
       destinationsModel: this.#destinationsModel,
       // Handlers
@@ -254,11 +260,15 @@ export default class MainPresenter {
 
   // Получаем события после сортировки и фильтра
   get events() {
-    try {
-      return this.#eventsModel.allEvents();
-    } catch (err) {
-      return [];
-    }
+    return this.#events || [];
+  }
+
+  set events(events) {
+    this.#events = events;
+  }
+
+  get offers() {
+    return this.#offersModel.offers || [];
   }
 
 }

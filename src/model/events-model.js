@@ -18,14 +18,14 @@ export default class EventsModel extends Observable {
   async init() {
     try {
       this.#events = await this.#eventApiService.events();
-      this.#events = this.#events.map(this.#adaptToClient);
+      this.#events = this.#events.map(this.#adaptedEventToClient);
     } catch (err) {
       this.#events = [];
     }
     this._notify(UPDATE_TYPE.INIT);
   }
 
-  #adaptToClient(event) {
+  #adaptedEventToClient(event) {
     const adaptedEvent = { ...event,
       basePrice: event.base_price,
       dateFrom: event.date_from,
