@@ -1,5 +1,5 @@
 import Observable from '../framework/observable.js';
-import { UPDATE_TYPE } from '../const.js';
+// import { UPDATE_TYPE } from '../const.js';
 
 export default class DestinationsModel extends Observable {
   #destinations = null;
@@ -17,8 +17,9 @@ export default class DestinationsModel extends Observable {
       this.#destinations = await this.#destinationsApiService.destinations();
     } catch (err) {
       this.#destinations = [];
+      throw new Error('Can\'t load destinations');
     }
-    this._notify(UPDATE_TYPE.INIT);
+    // this._notify(UPDATE_TYPE.INIT);
   }
 
   getDestinationById(id) {

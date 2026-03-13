@@ -1,5 +1,5 @@
 import Observable from '../framework/observable.js';
-import { UPDATE_TYPE } from '../const.js';
+// import { UPDATE_TYPE } from '../const.js';
 
 export default class OffersModel extends Observable {
   #offers = null;
@@ -17,15 +17,16 @@ export default class OffersModel extends Observable {
       this.#offers = await this.#offersApiService.offers();
     } catch (err) {
       this.#offers = [];
+      throw new Error('Can\'t load offers');
     }
-    this._notify(UPDATE_TYPE.INIT);
+    // this._notify(UPDATE_TYPE.INIT);
   }
 
   getOfferByType(type) {
     return this.#offers.find((offer) => offer.type === type).offers;
   }
 
-  get offers() {
+  get allOffers() {
     return this.#offers || [];
   }
 

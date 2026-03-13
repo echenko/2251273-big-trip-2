@@ -5,6 +5,7 @@ import TripPresenter from './trip-presenter.js';
 // Views
 import EventListView from '../view/event-list-view.js';
 import ListEmptyView from '../view/list-empty-view.js';
+import EventLoadingView from '../view/event-loading-view.js';
 // Utils
 import { remove, render } from '../framework/render.js';
 import { sortEventsByType, filterEventsByType, isEscapeKey } from '../utils.js';
@@ -13,7 +14,7 @@ import { USER_ACTION, UPDATE_TYPE, NEW_EVENT,ERROR_MESSAGE } from '../const.js';
 const newEventButton = document.querySelector('.trip-main__event-add-btn');
 
 export default class MainPresenter {
-  #events = null;
+  // #events = null;
   // Containers
   #eventListContainer = new EventListView();
   #eventContainer = null;
@@ -33,6 +34,7 @@ export default class MainPresenter {
   #currentFilterType = 'everything';
   // Views
   #listEmptyView = null;
+  #eventLoadingView = null;
 
   constructor({
     // Containers
@@ -80,32 +82,61 @@ export default class MainPresenter {
     } else if (updateType === UPDATE_TYPE.MAJOR) {
       // TODO: Доработать!
     } else if (updateType === UPDATE_TYPE.INIT) {
-      console.log('init');
-      const events = this.#eventsModel.allEvents;
-      console.log(this.events);
-      // this.events(events);
-      // console.log(this.#eventsModel.allEvents);
-      // this.events(this.#eventsModel.allEvents);
-      // console.log(this.events);
+      this.#newButtonEnabled();
+      this.#deleteEventLoading();
+      // Создание
+      this.#createSortEvent();
+      this.#createTripPresenter();
+      // Отрисовка
+      this.#renderEventsListContainer();
+      this.#renderAllEvents(this.events);
+      // Обработчики
+      this.#handleNewEventClick();
+      this.#tripPresenter.init(this.#currentFilterType);
+      document.addEventListener('keydown', this.#handleKeyDown);
     }
   };
 
   // Инициализируем презентер
-  init() {
-    // Инициализация
-    this.#eventsModel.init();
-    this.#offersModel.init();
-    this.#destinationsModel.init();
-    // Создание
-    this.#createSortEvent();
-    this.#createTripPresenter();
-    // Отрисовка
-    this.#renderEventsListContainer();
-    // this.#renderAllEvents(this.#events);
-    // Обработчики
-    // this.#handleNewEventClick();
-    // this.#tripPresenter.init(this.#currentFilterType);
-    // document.addEventListener('keydown', this.#handleKeyDown);
+  async init() {
+    this.#createEventLoading();
+    this.#newButtonDisabled();
+    try {
+      // Инициализация
+      Promise.all([
+        this.#eventsModel.init(),
+        this.#offersModel.init(),
+        this.#destinationsModel.init(),
+      ]).then(() => {
+        this.#newButtonEnabled();
+        this.#deleteEventLoading();
+        // Создание
+        this.#createSortEvent();
+        this.#createTripPresenter();
+        // Отрисовка
+        this.#renderEventsListContainer();
+        this.#renderAllEvents(this.events);
+        // Обработчики
+        this.#handleNewEventClick();
+        this.#tripPresenter.init(this.#currentFilterType);
+        document.addEventListener('keydown', this.#handleKeyDown);
+      });
+    } catch (err) {
+      // TODO: Доработать! Добавить обработку ошибок
+    } finally {
+      // TODO: Доработать! Добавить финализацию
+    }
+  }
+
+  // Создаем прелоадер
+  #createEventLoading() {
+    this.#eventLoadingView = new EventLoadingView();
+    render(this.#eventLoadingView, this.#eventContainer);
+  }
+
+  // Удаляем прелоадер
+  #deleteEventLoading() {
+    remove(this.#eventLoadingView);
   }
 
   // Отрисовываем пустой список
@@ -260,15 +291,10 @@ export default class MainPresenter {
 
   // Получаем события после сортировки и фильтра
   get events() {
-    return this.#events || [];
-  }
-
-  set events(events) {
-    this.#events = events;
-  }
-
-  get offers() {
-    return this.#offersModel.offers || [];
+    return filterEventsByType(
+      sortEventsByType(
+        this.#eventsModel.allEvents, this.#currentSortType),
+      this.#currentFilterType);
   }
 
 }

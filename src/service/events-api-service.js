@@ -19,7 +19,7 @@ export default class EventsApiService extends ApiService {
   // Обновляем события
   async updateEvent(event) {
     const response = await this._load({
-      url: `tasks/${event.id}`,
+      url: `points/${event.id}`,
       method: METHOD_API.PUT,
       body: JSON.stringify(event),
       headers: new Headers({'Content-Type': 'application/json'}),
