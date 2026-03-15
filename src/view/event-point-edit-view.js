@@ -226,18 +226,21 @@ export default class EventPointEditView extends AbstractStatefulView {
     this.element.querySelector('.event__input--destination').addEventListener('input', () => {
       const value = he.encode(this.element.querySelector('.event__input--destination').value);
       this._state.destination = this.#destinationsModel.getIdByName(value) || null;
-      eventSaveButton.disabled = !this._state.destination;
+      eventSaveButton.disabled = !this.#checkSubmitButton();
     });
 
     this.element.querySelector('.event__input--price').addEventListener('input', () => {
       this._state.basePrice = getNumberFromString(this.element.querySelector('.event__input--price').value);
       this.element.querySelector('.event__input--price').value = this._state.basePrice;
+      eventSaveButton.disabled = !this.#checkSubmitButton();
     });
 
     this.#setDateFrom();
     this.#setDateTo();
 
   }
+
+  #checkSubmitButton = () => this._state.destination && this._state.basePrice > 0;
 
   #updadeOffersEvent = (offerId, checked) => {
     if (checked) {

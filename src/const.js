@@ -68,7 +68,6 @@ const UPDATE_TYPE = {
 };
 
 const NEW_EVENT = {
-  'id': null,
   'basePrice': 0,
   'dateFrom': null,
   'dateTo': null,
@@ -97,7 +96,7 @@ const METHOD_API = {
   DELETE: 'DELETE',
 };
 
-const AUTHORIZATION = 'Basic Zm9vYmFyOjEyMzQ1Njc4';
+const AUTHORIZATION = 'Basic Zm9vYmFyOjEyMzQ1Njc';
 
 const URL_API = 'https://22.objects.htmlacademy.pro/big-trip';
 

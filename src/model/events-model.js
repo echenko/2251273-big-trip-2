@@ -1,8 +1,4 @@
 import Observable from '../framework/observable.js';
-// import { UPDATE_TYPE } from '../const.js';
-
-import { generateUniqueEventId } from '../utils.js';
-
 
 export default class EventsModel extends Observable {
   #events = null;
@@ -23,7 +19,6 @@ export default class EventsModel extends Observable {
       this.#events = [];
       throw err;
     }
-    // this._notify(UPDATE_TYPE.INIT);
   }
 
   #adaptedEventToClient(event) {
@@ -80,16 +75,31 @@ export default class EventsModel extends Observable {
   }
 
   // Добавляем события
-  addEvent(updateType, event) {
-    event.id = generateUniqueEventId(this.allEventsId);
-    this.#events = [...this.#events, event];
-    this._notify(updateType, event);
+  async addEvent(updateType, event) {
+    try {
+      await this.#eventApiService.addEvent(this.#adaptedEventToServer(event)).then(() => {
+        this.#events = [...this.#events, event];
+        this._notify(updateType, event);
+      });
+    } catch (err) {
+      throw new Error('Can\'t add event');
+    }
   }
 
   // Удаляем события
-  deleteEvent(updateType, event) {
-    this.#events = this.#events.filter((item) => item.id !== event.id);
-    this._notify(updateType, event);
+  async deleteEvent(updateType, event) {
+    try {
+      await this.#eventApiService.deleteEvent(event).then(() => {
+        this.#events = this.#events.filter((item) => item.id !== event.id);
+        this._notify(updateType, event);
+      }).catch(() => {
+        // TODO: добавить обработку!
+        throw new Error('Can\'t delete event');
+      });
+    } catch (err) {
+      throw new Error('Can\'t delete event');
+    }
+
   }
 
   // Получаем все события

@@ -142,21 +142,22 @@ export default class EventPresentor {
 
   // Обработчик отправки формы
   #handleFormSubmit = ({event}) => {
-    this.#handleEventChange({
-      actionType: USER_ACTION.UPDATE_TASK,
-      updateType: UPDATE_TYPE.MINOR,
-      update: event
-    });
-
+    // При редактировании события
     if (this.#eventComponent) {
-      this.#handleSwitchToCard();
-    } else {
+      this.#handleEventChange({
+        actionType: USER_ACTION.UPDATE_TASK,
+        updateType: UPDATE_TYPE.MINOR,
+        update: event
+      });
+    }
+    // При добавлении события
+    if (this.#eventAddComponent) {
       this.#event = event;
       remove(this.#eventAddComponent);
       this.#handleEventChange({
         actionType: USER_ACTION.ADD_TASK,
         updateType: UPDATE_TYPE.MINOR,
-        update: this.#event
+        update: event
       });
     }
   };
