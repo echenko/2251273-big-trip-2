@@ -208,6 +208,7 @@ export default class EventPointEditView extends AbstractStatefulView {
     this.element.querySelector('.event').addEventListener('submit', (evt) => {
       evt.preventDefault();
       this.#onSubmitForm({event:this._state});
+      eventSaveButton.disabled = true;
       eventSaveButton.innerHTML = 'Saving...';
     });
 
@@ -244,7 +245,6 @@ export default class EventPointEditView extends AbstractStatefulView {
 
     this.#setDateFrom();
     this.#setDateTo();
-
   }
 
   #checkSubmitButton = () => this._state.destination && this._state.basePrice > 0;

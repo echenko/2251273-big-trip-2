@@ -59,14 +59,23 @@ export default class MainPresenter {
   }
 
   #handleViewAction = ({ actionType, updateType, update }) => {
-    if (actionType === USER_ACTION.UPDATE_TASK) {
-      this.#eventsModel.updateEvent(updateType, update);
-    } else if (actionType === USER_ACTION.ADD_TASK) {
-      this.#newButtonEnabled();
-      this.#eventsModel.addEvent(updateType, update);
-    } else if (actionType === USER_ACTION.DELETE_TASK) {
+    if (actionType === USER_ACTION.UPDATE_EVENT) {
+      this.#eventsModel.updateEvent(updateType, update).then(() => {
+        // TODO: При удачном обновлении события!
+      }).catch(() => {
+        // TODO: При ошибке обновления события!
+        this.#eventsPresentor.get(update.id).reset(update);
+      });
+    } else if (actionType === USER_ACTION.ADD_EVENT) {
+      this.#eventsModel.addEvent(updateType, update).then(() => {
+        // TODO: При удачном добавлении события!
+      }).catch(() => {
+        // TODO: При ошибке добавления события!
+        this.#newEventPresentor.add(update);
+      });
+    } else if (actionType === USER_ACTION.DELETE_EVENT) {
       this.#eventsModel.deleteEvent(updateType, update);
-    } else if (actionType === USER_ACTION.CANSEL_TASK) {
+    } else if (actionType === USER_ACTION.CANSEL_EVENT) {
       this.#newButtonEnabled();
       this.#newEventPresentor.destroy();
       this.#newEventPresentor = null;
@@ -133,8 +142,12 @@ export default class MainPresenter {
         this.#handleNewEventClick();
         this.#tripPresenter.init(this.#currentFilterType);
         document.addEventListener('keydown', this.#handleKeyDown);
+      }).catch(() => {
+        this.#deleteEventLoading();
+        // TODO: Доработать! Добавить обработку ошибок
       });
     } catch (err) {
+
       // TODO: Доработать! Добавить обработку ошибок
     } finally {
       // TODO: Доработать! Добавить финализацию

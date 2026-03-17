@@ -71,6 +71,8 @@ export default class EventsModel extends Observable {
     try {
       await this.#eventApiService.updateEvent(this.#adaptedEventToServer(event)).then(() => {
         this.#events = this.#events.map((item) => item.id === event.id ? event : item);
+      }).catch(() => {
+        throw new Error('Can\'t update event');
       });
       this._notify(updateType, event);
     } catch (err) {
@@ -83,8 +85,10 @@ export default class EventsModel extends Observable {
     try {
       await this.#eventApiService.addEvent(this.#adaptedEventToServer(event)).then(() => {
         this.init();
-        this._notify(updateType, event);
+      }).catch(() => {
+        throw new Error('Can\'t add event');
       });
+      this._notify(updateType, event);
     } catch (err) {
       throw new Error('Can\'t add event');
     }

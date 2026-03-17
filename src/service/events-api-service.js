@@ -19,7 +19,7 @@ export default class EventsApiService extends ApiService {
   // Обновляем событие
   async updateEvent(event) {
     const response = await this._load({
-      url: `points/${event.id}`,
+      url: `points00/${event.id}`,
       method: METHOD_API.PUT,
       body: JSON.stringify(event),
       headers: new Headers({'Content-Type': 'application/json'}),
@@ -43,7 +43,7 @@ export default class EventsApiService extends ApiService {
   // Добавляем событие
   async addEvent(event) {
     const response = await this._load({
-      url: 'points',
+      url: 'points00',
       method: METHOD_API.POST,
       body: JSON.stringify(event),
       headers: new Headers({'Content-Type': 'application/json'}),
