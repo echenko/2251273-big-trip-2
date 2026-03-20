@@ -54,10 +54,10 @@ const EVENT_MODE = {
 };
 
 const USER_ACTION = {
-  UPDATE_TASK: 'UPDATE',
-  ADD_TASK: 'ADD',
-  CANSEL_TASK: 'CANCEL',
-  DELETE_TASK: 'DELETE',
+  UPDATE_EVENT: 'UPDATE',
+  ADD_EVENT: 'ADD',
+  CANSEL_EVENT: 'CANCEL',
+  DELETE_EVENT: 'DELETE',
 };
 
 const UPDATE_TYPE = {
@@ -68,7 +68,6 @@ const UPDATE_TYPE = {
 };
 
 const NEW_EVENT = {
-  'id': null,
   'basePrice': 0,
   'dateFrom': null,
   'dateTo': null,
@@ -97,9 +96,14 @@ const METHOD_API = {
   DELETE: 'DELETE',
 };
 
-const AUTHORIZATION = 'Basic Zm9vYmFyOjEyMzQ1Njc4';
+const AUTHORIZATION = 'Basic Zm9vYmFyOjEyMzQ1Nj';
 
 const URL_API = 'https://22.objects.htmlacademy.pro/big-trip';
+
+const TIME_LIMIT = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000
+};
 
 export {
   MAX_POINTS,
@@ -116,4 +120,5 @@ export {
   METHOD_API,
   AUTHORIZATION,
   URL_API,
+  TIME_LIMIT,
 };

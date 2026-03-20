@@ -34,7 +34,7 @@ function crateEventTypeList({ event, destinationsModel }) {
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${TypePoint[event.type]}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationsModel.getDestinationById(event.destination)?.name || ''}" list="destination-list-1">
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationsModel.getDestinationById(event.destination)?.name || ''}" list="destination-list-1" autocomplete="off">
                     <datalist id="destination-list-1">
                     ${allCities.map((city) => `<option value="${city}"></option>`).join('')}
                     </datalist>
@@ -59,7 +59,7 @@ function createEventPrice({ eventPrice }) {
       <label class="event__label" for="event-price-1">
       <span class="visually-hidden">Price</span>&euro;
       </label>
-      <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${eventPrice}">
+      <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${eventPrice}" autocomplete="off">
     </div>
   `);
 }
@@ -135,7 +135,7 @@ function createEventPointAdd({
                   ${crateEventTypeList({ event, destinationsModel })}
                   ${createEventDate({ eventStartDate, eventEndDate })}
                   ${createEventPrice({ eventPrice })}
-                  <button class="event__save-btn  btn  btn--blue" type="submit" ${event.destination ? '' : 'disabled'}>Save</button>
+                  <button class="event__save-btn  btn  btn--blue" type="submit" ${event.destination && eventPrice > 0 ? '' : 'disabled'}>Save</button>
                   <button class="event__reset-btn" type="reset">Cancel</button>
                 </header>
                 <section class="event__details">
@@ -193,15 +193,20 @@ export default class EventPointAddView extends AbstractStatefulView {
 
   _restoreHandlers() {
     const eventSaveButton = this.element.querySelector('.event__save-btn');
+    const eventDeleteButton = this.element.querySelector('.event__reset-btn');
 
     this.element.querySelector('.event').addEventListener('submit', (evt) => {
       evt.preventDefault();
       this.#onSubmitForm({event:this._state});
+      eventSaveButton.disabled = true;
+      eventSaveButton.innerHTML = 'Saving...';
     });
 
     this.element.querySelector('.event').addEventListener('reset', (evt) => {
       evt.preventDefault();
       this.#onCancelForm();
+      eventDeleteButton.disabled = true;
+      eventDeleteButton.innerHTML = 'Deleting...';
     });
 
     this.element.querySelectorAll('.event__offer-checkbox').forEach((checkbox) => {
@@ -219,18 +224,21 @@ export default class EventPointAddView extends AbstractStatefulView {
     this.element.querySelector('.event__input--destination').addEventListener('input', () => {
       const value = he.encode(this.element.querySelector('.event__input--destination').value);
       this._state.destination = this.#destinationsModel.getIdByName(value) || null;
-      eventSaveButton.disabled = !this._state.destination;
+      eventSaveButton.disabled = !this.#checkSubmitButton();
     });
 
     this.element.querySelector('.event__input--price').addEventListener('input', () => {
       this._state.basePrice = getNumberFromString(this.element.querySelector('.event__input--price').value);
       this.element.querySelector('.event__input--price').value = this._state.basePrice;
+      eventSaveButton.disabled = !this.#checkSubmitButton();
     });
 
     this.#setDateFrom();
     this.#setDateTo();
 
   }
+
+  #checkSubmitButton = () => this._state.destination && this._state.basePrice > 0;
 
   #updadeOffersEvent = (offerId, checked) => {
     if (checked) {
@@ -275,10 +283,12 @@ export default class EventPointAddView extends AbstractStatefulView {
 
   #dateFromChangeHandler = (selectedDates) => {
     this._state.dateFrom = selectedDates[0].toISOString();
+    this.#dateTo.set('minDate', this._state.dateFrom);
   };
 
   #dateToChangeHandler = (selectedDates) => {
     this._state.dateTo = selectedDates[0].toISOString();
+    this.#dateFrom.set('maxDate', this._state.dateTo);
   };
 
 }

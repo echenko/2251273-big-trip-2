@@ -10,21 +10,47 @@ export default class EventsApiService extends ApiService {
   // Получаем события
   async events() {
     return this._load({
+      // TODO: Убрать перед сдачей!
       url: 'points',
       method: METHOD_API.GET,
     })
       .then(ApiService.parseResponse);
   }
 
-  // Обновляем события
+  // Обновляем событие
   async updateEvent(event) {
     const response = await this._load({
+      // TODO: Убрать перед сдачей!
       url: `points/${event.id}`,
       method: METHOD_API.PUT,
       body: JSON.stringify(event),
       headers: new Headers({'Content-Type': 'application/json'}),
     });
 
+    const parsedResponse = await ApiService.parseResponse(response);
+
+    return parsedResponse;
+  }
+
+  // Удаляем событие
+  async deleteEvent(event) {
+    const response = await this._load({
+      url: `points/${event.id}`,
+      method: METHOD_API.DELETE,
+    });
+
+    return response;
+  }
+
+  // Добавляем событие
+  async addEvent(event) {
+    const response = await this._load({
+      // TODO: Убрать перед сдачей!
+      url: 'points',
+      method: METHOD_API.POST,
+      body: JSON.stringify(event),
+      headers: new Headers({'Content-Type': 'application/json'}),
+    });
     const parsedResponse = await ApiService.parseResponse(response);
 
     return parsedResponse;

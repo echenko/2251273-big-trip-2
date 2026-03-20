@@ -20,6 +20,7 @@ export default class EventPresentor {
   #eventAddComponent = null;
   // Temp
   #event = null;
+  #savedEvent = null;
   #mode = EVENT_MODE.DEFAULT;
 
   constructor({
@@ -53,7 +54,7 @@ export default class EventPresentor {
   }
 
   // Обновление события
-  update(event) {
+  update(event = this.#event) {
     this.#event = event;
 
     const updatedEventComponent = this.#createEventComponent();
@@ -69,10 +70,35 @@ export default class EventPresentor {
     this.#eventEditComponent = updatedEventEditComponent;
   }
 
+  reset (event = this.#savedEvent) {
+    this.#event = {...event};
+    const updatedEventEditComponent = this.#createEventEditComponent();
+
+    if (this.#mode === EVENT_MODE.EDITING) {
+      updatedEventEditComponent.element.querySelector('.event--edit').classList.add('shake');
+      replace(updatedEventEditComponent, this.#eventEditComponent);
+      this.#eventEditComponent = updatedEventEditComponent;
+    }
+    this.#eventEditComponent = updatedEventEditComponent;
+    this.#eventComponent.element.querySelector('.event').classList.add('shake');
+    setTimeout(() => {
+      this.#eventComponent.element.querySelector('.event').classList.remove('shake');
+      this.#eventEditComponent.element.querySelector('.event--edit').classList.remove('shake');
+    }, 1000);
+  }
+
   // Добавление события
-  add() {
-    this.#eventAddComponent = this.#createEventAddComponent();
-    render(this.#eventAddComponent, this.#eventContainer, RENDER_POSITION.AFTERBEGIN);
+  add(event) {
+    this.#event = {...event};
+    if (this.#eventAddComponent) {
+      remove(this.#eventAddComponent);
+      this.#eventAddComponent = this.#createEventAddComponent(this.#event);
+      this.#eventAddComponent.element.querySelector('.event--edit').classList.add('shake');
+      render(this.#eventAddComponent, this.#eventContainer, RENDER_POSITION.AFTERBEGIN);
+    } else {
+      this.#eventAddComponent = this.#createEventAddComponent();
+      render(this.#eventAddComponent, this.#eventContainer, RENDER_POSITION.AFTERBEGIN);
+    }
   }
 
   // Создание компонента
@@ -97,10 +123,10 @@ export default class EventPresentor {
   }
 
   // Создание компонента добавления
-  #createEventAddComponent() {
+  #createEventAddComponent(event = NEW_EVENT) {
     return new EventPointAddView({
       ...this.component,
-      event: NEW_EVENT,
+      event: event,
       onSubmitForm: this.#handleFormSubmit,
       onCancelForm: this.#handleFormCancel
     }
@@ -116,12 +142,15 @@ export default class EventPresentor {
 
   // Переключение режима на просмотр
   #switchToCard() {
+    this.#event = {...this.#savedEvent};
     replace(this.#eventComponent, this.#eventEditComponent);
+    this.#eventEditComponent = this.#createEventEditComponent();
     this.#mode = EVENT_MODE.DEFAULT;
   }
 
   // Обработчик переключения на редактирование
   #handleSwitchToForm = () => {
+    this.#savedEvent = {...this.#event};
     this.#switchToForm();
   };
 
@@ -134,7 +163,7 @@ export default class EventPresentor {
   #handleFavoriteClick = () => {
     this.#event.isFavorite = !this.#event.isFavorite;
     this.#handleEventChange({
-      actionType: USER_ACTION.UPDATE_TASK,
+      actionType: USER_ACTION.UPDATE_EVENT,
       updateType: UPDATE_TYPE.PATCH,
       update: this.#event
     });
@@ -142,21 +171,21 @@ export default class EventPresentor {
 
   // Обработчик отправки формы
   #handleFormSubmit = ({event}) => {
-    this.#handleEventChange({
-      actionType: USER_ACTION.UPDATE_TASK,
-      updateType: UPDATE_TYPE.MINOR,
-      update: event
-    });
-
+    // При редактировании события
     if (this.#eventComponent) {
-      this.#handleSwitchToCard();
-    } else {
-      this.#event = event;
-      remove(this.#eventAddComponent);
       this.#handleEventChange({
-        actionType: USER_ACTION.ADD_TASK,
+        actionType: USER_ACTION.UPDATE_EVENT,
         updateType: UPDATE_TYPE.MINOR,
-        update: this.#event
+        update: event
+      });
+    }
+    // При добавлении события
+    if (this.#eventAddComponent) {
+      this.#event = event;
+      this.#handleEventChange({
+        actionType: USER_ACTION.ADD_EVENT,
+        updateType: UPDATE_TYPE.MINOR,
+        update: event
       });
     }
   };
@@ -164,7 +193,7 @@ export default class EventPresentor {
   // Обработчик удаления события
   #handleFormDelete = () => {
     this.#handleEventChange({
-      actionType: USER_ACTION.DELETE_TASK,
+      actionType: USER_ACTION.DELETE_EVENT,
       updateType: UPDATE_TYPE.MINOR,
       update: this.#event
     });
@@ -175,7 +204,7 @@ export default class EventPresentor {
     remove(this.#eventAddComponent);
     this.#eventAddComponent = null;
     this.#handleEventChange({
-      actionType: USER_ACTION.CANSEL_TASK,
+      actionType: USER_ACTION.CANSEL_EVENT,
       updateType: null,
       update: null
     });
@@ -193,8 +222,6 @@ export default class EventPresentor {
   destroy() {
     remove(this.#eventComponent);
     remove(this.#eventEditComponent);
-
-    remove(this.#eventAddComponent);
     remove(this.#eventAddComponent);
   }
 
