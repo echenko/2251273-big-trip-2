@@ -228,6 +228,12 @@ export default class EventPointEditView extends AbstractStatefulView {
     this.element.querySelectorAll('.event__type-input').forEach((radio) => {
       radio.addEventListener('change', () => {
         this.#choiceTypePoint(radio.dataset.type);
+        if (this._state.type !== this.#event.type) {
+          this._state.offers = [];
+        } else {
+          this._state.offers = this.#event.offers;
+          this.#updateState(this._setState);
+        }
       });
     });
 
