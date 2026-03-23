@@ -79,7 +79,6 @@ export default class MainPresenter {
     } else if (actionType === USER_ACTION.ADD_EVENT) {
       this.#eventsModel.addEvent(updateType, update).then(() => {
         // TODO: При удачном добавлении события!
-        // this.#tripPresenter.update(this.#currentFilterType);
       }).catch(() => {
         this.#newEventPresentor.add(update);
       }).finally(() => {
