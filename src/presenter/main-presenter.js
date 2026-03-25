@@ -10,7 +10,7 @@ import FailedLoadView from '../view/failed-load-view.js';
 // Utils
 import { remove, render } from '../framework/render.js';
 import { sortEventsByType, filterEventsByType, isEscapeKey } from '../utils.js';
-import { USER_ACTION, UPDATE_TYPE, NEW_EVENT,ERROR_MESSAGE, TIME_LIMIT } from '../const.js';
+import { USER_ACTION, UPDATE_TYPE, NEW_EVENT,ERROR_MESSAGE, TIME_LIMIT, EVENT_MODE } from '../const.js';
 // DOM
 const newEventButton = document.querySelector('.trip-main__event-add-btn');
 // Framework
@@ -116,6 +116,7 @@ export default class MainPresenter {
           this.#deleteEventLoading();
           this.#newButtonEnabled();
           this.#renderAllEvents(this.events);
+          this.#resetSort();
         }).catch(() => {
           // TODO: добавить обработку!
           this.#newButtonDisabled();
@@ -273,7 +274,9 @@ export default class MainPresenter {
     newEventButton.addEventListener('click', () => {
       this.#createNewEvent();
       this.#newButtonDisabled();
-      this.#handleModeChange();
+      this.#handleModeChange({
+        mode: EVENT_MODE.CREATING,
+      });
     });
   }
 
@@ -281,11 +284,18 @@ export default class MainPresenter {
   #createNewEvent(event = NEW_EVENT) {
     this.#newEventPresentor = this.#createEventPresentor();
     this.#newEventPresentor.add({event});
+    this.#resetSort();
+    this.#resetFilter();
   }
 
-  // Сбрасываем режим редактирования
-  #handleModeChange = () => {
+  // Сбрасываем режим редактирования и удаляем новое событие
+  #handleModeChange = ({mode = null}) => {
     this.#eventsPresentor.forEach((eventPresentor) => eventPresentor.resetView());
+    if (mode === EVENT_MODE.EDITING && this.#newEventPresentor) {
+      this.#newEventPresentor.destroy();
+      this.#newEventPresentor = null;
+      this.#newButtonEnabled();
+    }
   };
 
   // Обработчик сортировки
@@ -320,6 +330,11 @@ export default class MainPresenter {
     this.#resetSort();
   };
 
+  #resetFilter = () => {
+    this.#currentFilterType = 'everything';
+    this.#tripPresenter.update(this.#currentFilterType);
+  };
+
   // Очистка событий
   #clearEvents = () => {
     this.#eventsPresentor.forEach((eventPresentor) => eventPresentor.destroy());
@@ -339,7 +354,9 @@ export default class MainPresenter {
   #handleKeyDown = (evt) => {
     if (isEscapeKey(evt)) {
       this.#newButtonEnabled();
-      this.#handleModeChange();
+      this.#handleModeChange({
+        mode: EVENT_MODE.DEFAULT,
+      });
       if (this.#newEventPresentor) {
         this.#newEventPresentor.destroy();
       }

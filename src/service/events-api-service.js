@@ -20,7 +20,6 @@ export default class EventsApiService extends ApiService {
   // Обновляем событие
   async updateEvent(event) {
     const response = await this._load({
-      // TODO: Убрать перед сдачей!
       url: `points/${event.id}`,
       method: METHOD_API.PUT,
       body: JSON.stringify(event),
