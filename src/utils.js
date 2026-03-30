@@ -87,7 +87,7 @@ function sortEventsByType(events, type = 'day') {
   } else if (type === 'day') {
     return events.sort((a, b) => dayjs(a.dateFrom).diff(dayjs(b.dateFrom)));
   }
-  return events;
+  // return events;
 }
 
 function generateUniqueEventId(array) {
@@ -100,14 +100,14 @@ function getFirstEvent(events) {
 }
 
 function getLastEvent(events) {
-  return events.sort((a, b) => dayjs(b.dateFrom).diff(dayjs(a.dateFrom))).at(0);
+  return events.sort((a, b) => dayjs(a.dateFrom).diff(dayjs(b.dateFrom))).at(0);
 }
 
 function cutCityes(array) {
   if (array.length > 3) {
-    return [array.at(-1),'...', array.at(0)].join(' &mdash; ');
+    return [array.at(0),'...', array.at(-1)].join(' &mdash; ');
   } else if (array.length > 1) {
-    return array.reverse().join(' &mdash; ');
+    return array.join(' &mdash; ');
   }
   return array;
 }

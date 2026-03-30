@@ -1,4 +1,5 @@
 import Observable from '../framework/observable.js';
+import { sortEventsByType } from '../utils.js';
 
 export default class EventsModel extends Observable {
   #events = null;
@@ -111,7 +112,7 @@ export default class EventsModel extends Observable {
 
   // Получаем все события
   get allEvents() {
-    return this.#events;
+    return sortEventsByType(this.#events);
   }
 
   // Получаем id всех событий

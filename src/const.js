@@ -14,6 +14,7 @@ const TypePoint = {
 
 const DateFormat = {
   eventDate:'MMM D',
+  eventInfoDate:'D MMM',
   eventTime:'HH:mm',
   eventGroupTime:'D/MM/YY HH:mm',
 };

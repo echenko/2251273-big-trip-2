@@ -179,9 +179,6 @@ export default class EventPointAddView extends AbstractStatefulView {
 
   get template() {
 
-    // this._state.dateFrom = this._state.dateFrom || dayjs().toISOString();
-    // this._state.dateTo = this._state.dateTo || dayjs().add(1, 'day').toISOString();
-
     return createEventPointAdd({
       event: this._state,
       offersModel: this.#offersModel,
@@ -194,6 +191,8 @@ export default class EventPointAddView extends AbstractStatefulView {
     const eventDeleteButton = this.element.querySelector('.event__reset-btn');
     const eventStartTime = this.element.querySelector('#event-start-time-1');
     const eventEndTime = this.element.querySelector('#event-end-time-1');
+
+    eventSaveButton.disabled = !this.#checkSubmitButton();
 
     this.element.querySelector('.event').addEventListener('submit', (evt) => {
       evt.preventDefault();
@@ -243,7 +242,7 @@ export default class EventPointAddView extends AbstractStatefulView {
     this.#setDateTo();
   }
 
-  #checkSubmitButton = () => this._state.destination && this._state.basePrice > 0;
+  #checkSubmitButton = () => this._state.destination && this._state.basePrice > 0 && this._state.dateFrom !== null && this._state.dateTo !== null;
 
   #updadeOffersEvent = (offerId, checked) => {
     if (checked) {
