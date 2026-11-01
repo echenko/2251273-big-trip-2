@@ -8,6 +8,7 @@ module.exports = {
     filename: 'bundle.[contenthash].js', // Имя бандла
     path: path.resolve(__dirname, 'build'), // Директория для файлов сборки
     clean: true, // Удаляем предыдущую сборку перед созданием новой
+    publicPath: '/2251273-big-trip-2/',
   },
   devtool: 'source-map', // Генерируем карту исходного кода
   plugins: [ // Подключаем плагины
